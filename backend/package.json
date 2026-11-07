@@ -1,0 +1,28 @@
+{
+  "name": "physiotherapy-backend",
+  "version": "1.0.0",
+  "description": "Physiotherapy Management System Backend - Node.js + Express + PostgreSQL",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node src/server.js",
+    "db:init": "node database/initDb.js"
+  },
+  "keywords": [
+    "physiotherapy",
+    "nodejs",
+    "postgresql",
+    "express"
+  ],
+  "author": "Admionix Solutions / Converted to Full-Stack MERN/PERN",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.4",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.18.0",
+    "qrcode": "^1.5.4"
+  }
+}

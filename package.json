@@ -1,0 +1,25 @@
+{
+  "name": "physiotherapy-management-app",
+  "version": "1.0.0",
+  "description": "Full-stack Physiotherapy Clinic Management App - React + Node.js + PostgreSQL",
+  "scripts": {
+    "dev": "concurrently -n \"BACKEND,FRONTEND\" -c \"cyan,magenta\" \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
+    "start": "npm run dev",
+    "backend": "npm run dev --prefix backend",
+    "frontend": "npm run dev --prefix frontend",
+    "install:all": "cd backend && npm install && cd ../frontend && npm install",
+    "db:init": "npm run db:init --prefix backend"
+  },
+  "keywords": [
+    "physiotherapy",
+    "react",
+    "nodejs",
+    "postgresql",
+    "clinic-management"
+  ],
+  "author": "Converted from Odoo 19 Module",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}
