@@ -1,0 +1,903 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ================================================================
+         APPOINTMENT BOOKING FORM
+         ================================================================ -->
+    <template id="website_appointment_form" name="Book Appointment">
+        <t t-call="website.layout">
+
+            <!-- Inline styles -->
+            <t t-set="head">
+                <style>
+                    /* Google Font */
+                    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&amp;family=Playfair+Display:wght@600&amp;display=swap');
+
+                    /* CSS Variables */
+                    :root {
+                        --appt-primary: #0d9488;
+                        --appt-primary-dark: #0f766e;
+                        --appt-primary-light: #ccfbf1;
+                        --appt-accent: #f0fdfa;
+                        --appt-border: #e2e8f0;
+                        --appt-text: #1e293b;
+                        --appt-muted: #64748b;
+                        --appt-white: #ffffff;
+                        --appt-radius: 14px;
+                        --appt-shadow: 0 4px 24px rgba(13,148,136,0.10);
+                        --appt-shadow-lg: 0 8px 40px rgba(13,148,136,0.15);
+                    }
+
+                    /* Page wrapper */
+                    .appt-page {
+                        background: linear-gradient(135deg, #f0fdfa 0%, #e0f2fe 100%);
+                        min-height: 100vh;
+                        padding: 48px 0 64px;
+                        font-family: 'DM Sans', sans-serif;
+                        color: var(--appt-text);
+                    }
+
+                    /* Page heading */
+                    .appt-heading {
+                        font-family: 'Playfair Display', serif;
+                        font-size: 2.1rem;
+                        font-weight: 600;
+                        color: var(--appt-primary-dark);
+                        text-align: center;
+                        margin-bottom: 6px;
+                    }
+                    .appt-subheading {
+                        text-align: center;
+                        color: var(--appt-muted);
+                        font-size: .95rem;
+                        margin-bottom: 36px;
+                    }
+
+                    /* QR card */
+                    .appt-qr-card {
+                        background: var(--appt-white);
+                        border: 1.5px solid var(--appt-primary-light);
+                        border-radius: var(--appt-radius);
+                        padding: 20px 24px;
+                        text-align: center;
+                        box-shadow: var(--appt-shadow);
+                        margin-bottom: 36px;
+                    }
+                    .appt-qr-card h6 {
+                        color: var(--appt-primary);
+                        font-weight: 600;
+                        margin-bottom: 4px;
+                    }
+                    .appt-qr-card p {
+                        font-size: .8rem;
+                        color: var(--appt-muted);
+                        margin-bottom: 10px;
+                    }
+                    .appt-qr-card small {
+                        font-size: .72rem;
+                        color: #94a3b8;
+                    }
+                    .appt-qr-card img {
+                        border: 1px solid var(--appt-border);
+                        border-radius: 10px;
+                        padding: 4px;
+                    }
+
+                    /* Main card */
+                    .appt-card {
+                        background: var(--appt-white);
+                        border-radius: 20px;
+                        box-shadow: var(--appt-shadow-lg);
+                        overflow: hidden;
+                    }
+
+                    /* Left panel (date + slots) */
+                    .appt-left {
+                        background: var(--appt-primary);
+                        padding: 36px 32px;
+                        color: var(--appt-white);
+                    }
+                    .appt-left-title {
+                        font-family: 'Playfair Display', serif;
+                        font-size: 1.25rem;
+                        font-weight: 600;
+                        margin-bottom: 4px;
+                    }
+                    .appt-left-sub {
+                        font-size: .82rem;
+                        opacity: .8;
+                        margin-bottom: 24px;
+                    }
+
+                    /* Date input */
+                    .appt-date-wrap { position: relative; margin-bottom: 24px; }
+                    .appt-date-wrap label {
+                        display: block;
+                        font-size: .78rem;
+                        font-weight: 600;
+                        letter-spacing: .06em;
+                        text-transform: uppercase;
+                        opacity: .85;
+                        margin-bottom: 6px;
+                    }
+                    .appt-date-input {
+                        width: 100%;
+                        background: rgba(255,255,255,0.15);
+                        border: 1.5px solid rgba(255,255,255,0.35);
+                        border-radius: 10px;
+                        color: #fff;
+                        font-family: 'DM Sans', sans-serif;
+                        font-size: .95rem;
+                        padding: 10px 14px;
+                        outline: none;
+                        transition: border-color .2s, background .2s;
+                        color-scheme: dark;
+                    }
+                    .appt-date-input:focus {
+                        border-color: rgba(255,255,255,0.9);
+                        background: rgba(255,255,255,0.22);
+                    }
+                    .appt-date-input:disabled {
+                        opacity: .45;
+                        cursor: not-allowed;
+                    }
+                    .appt-date-hint {
+                        font-size: .75rem;
+                        opacity: .7;
+                        margin-top: 6px;
+                    }
+
+                    /* Time slot grid */
+                    .appt-slots-label {
+                        font-size: .78rem;
+                        font-weight: 600;
+                        letter-spacing: .06em;
+                        text-transform: uppercase;
+                        opacity: .85;
+                        margin-bottom: 10px;
+                    }
+                    .appt-slot-grid {
+                        display: grid;
+                        grid-template-columns: repeat(3, 1fr);
+                        gap: 10px;
+                    }
+                    .appt-slot-btn {
+                        background: rgba(255,255,255,0.15);
+                        border: 1.5px solid rgba(255,255,255,0.30);
+                        border-radius: 10px;
+                        color: #fff;
+                        font-family: 'DM Sans', sans-serif;
+                        font-size: .82rem;
+                        font-weight: 500;
+                        padding: 9px 4px;
+                        text-align: center;
+                        cursor: pointer;
+                        transition: background .18s, border-color .18s, transform .15s;
+                        user-select: none;
+                    }
+                    .appt-slot-btn:hover:not(.appt-slot-booked) {
+                        background: rgba(255,255,255,0.28);
+                        transform: translateY(-2px);
+                    }
+                    .appt-slot-btn.appt-slot-selected {
+                        background: #fff;
+                        color: var(--appt-primary-dark);
+                        border-color: #fff;
+                        font-weight: 700;
+                        box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+                    }
+                    .appt-slot-btn.appt-slot-booked {
+                        background: rgba(220,53,69,0.18);
+                        border-color: rgba(220,53,69,0.45);
+                        color: rgba(255,255,255,0.45);
+                        cursor: not-allowed;
+                        text-decoration: line-through;
+                    }
+                    .appt-slots-placeholder {
+                        opacity: .65;
+                        font-size: .85rem;
+                        padding: 12px 0;
+                    }
+
+                    /* Legend */
+                    .appt-legend {
+                        display: flex;
+                        gap: 16px;
+                        margin-top: 18px;
+                        font-size: .78rem;
+                        opacity: .85;
+                    }
+                    .appt-legend span { display: flex; align-items: center; gap: 5px; }
+                    .appt-legend-dot {
+                        width: 9px; height: 9px;
+                        border-radius: 50%;
+                        display: inline-block;
+                    }
+
+                    /* Right panel (form fields) */
+                    .appt-right { padding: 36px 36px; }
+                    .appt-right-title {
+                        font-family: 'Playfair Display', serif;
+                        font-size: 1.25rem;
+                        color: var(--appt-primary-dark);
+                        font-weight: 600;
+                        margin-bottom: 4px;
+                    }
+                    .appt-right-sub {
+                        font-size: .82rem;
+                        color: var(--appt-muted);
+                        margin-bottom: 26px;
+                    }
+
+                    /* Form field group */
+                    .appt-field { margin-bottom: 18px; }
+                    .appt-field label {
+                        display: block;
+                        font-size: .78rem;
+                        font-weight: 600;
+                        letter-spacing: .05em;
+                        text-transform: uppercase;
+                        color: var(--appt-muted);
+                        margin-bottom: 6px;
+                    }
+                    .appt-input {
+                        width: 100%;
+                        border: 1.5px solid var(--appt-border);
+                        border-radius: 10px;
+                        font-family: 'DM Sans', sans-serif;
+                        font-size: .93rem;
+                        color: var(--appt-text);
+                        padding: 11px 14px;
+                        background: #f8fafc;
+                        outline: none;
+                        transition: border-color .2s, box-shadow .2s, background .2s;
+                        appearance: none;
+                        -webkit-appearance: none;
+                    }
+                    .appt-input:focus {
+                        border-color: var(--appt-primary);
+                        background: var(--appt-white);
+                        box-shadow: 0 0 0 3px rgba(13,148,136,0.12);
+                    }
+                    select.appt-input {
+                        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+                        background-repeat: no-repeat;
+                        background-position: right 14px center;
+                        padding-right: 36px;
+                    }
+
+                    /* Booking summary strip */
+                    .appt-summary {
+                        background: var(--appt-primary-light);
+                        border: 1.5px solid rgba(13,148,136,0.22);
+                        border-radius: 10px;
+                        padding: 12px 16px;
+                        font-size: .87rem;
+                        color: var(--appt-primary-dark);
+                        font-weight: 500;
+                        margin-bottom: 22px;
+                        display: none;
+                        align-items: center;
+                        gap: 8px;
+                        line-height: 1.5;
+                    }
+                    .appt-summary.visible { display: flex; }
+
+                    /* Submit button */
+                    .appt-submit-btn {
+                        display: block;
+                        width: 100%;
+                        background: #0d9488;
+                        color: #ffffff;
+                        border: none;
+                        border-radius: 12px;
+                        font-family: 'DM Sans', sans-serif;
+                        font-size: 1rem;
+                        font-weight: 600;
+                        padding: 14px;
+                        cursor: pointer;
+                        letter-spacing: .03em;
+                        transition: background .2s, transform .15s, box-shadow .2s;
+                        box-shadow: 0 4px 16px rgba(13,148,136,0.30);
+                        text-align: center;
+                        line-height: 1.5;
+                        text-decoration: none;
+                        -webkit-appearance: none;
+                        appearance: none;
+                    }
+                    .appt-submit-btn:hover {
+                        background: #0f766e;
+                        color: #ffffff;
+                        transform: translateY(-2px);
+                        box-shadow: 0 6px 22px rgba(13,148,136,0.38);
+                    }
+                    .appt-submit-btn:active { transform: translateY(0); }
+
+                    /* Responsive */
+                    @media (max-width: 767px) {
+                        .appt-left { padding: 28px 20px; }
+                        .appt-right { padding: 28px 20px; }
+                        .appt-slot-grid { grid-template-columns: repeat(3, 1fr); }
+                    }
+                </style>
+            </t>
+
+            <!-- Page body -->
+            <div class="appt-page">
+                <div class="container">
+
+                    <!-- Page title -->
+                    <h2 class="appt-heading">Book an Appointment</h2>
+                    <p class="appt-subheading">
+                        Select your practitioner, choose a date, and confirm your slot.
+                    </p>
+
+                    <!-- Main booking card -->
+                    <div class="appt-card">
+                        <form action="/submit-appointment" method="post" id="appt-form">
+                            <input type="hidden" name="csrf_token"
+                                   t-att-value="request.csrf_token()"/>
+
+                            <!-- Hidden slot_time select, populated by JS -->
+                            <select name="slot_time" id="slot_time" style="display:none;">
+                                <option value="">-- Select Time Slot --</option>
+                            </select>
+
+                            <div class="row g-0">
+
+                                <!-- LEFT PANEL: Date and slot picker -->
+                                <div class="col-md-5 appt-left">
+                                    <p class="appt-left-title">Select Date &amp; Time</p>
+                                    <p class="appt-left-sub">
+                                        Available slots update once you pick a practitioner.
+                                    </p>
+
+                                    <!-- Date picker -->
+                                    <div class="appt-date-wrap">
+                                        <label for="appointment_date">Appointment Date</label>
+                                        <input type="date"
+                                               name="appointment_date"
+                                               id="appointment_date"
+                                               class="appt-date-input"
+                                               required="1"
+                                               disabled="disabled"/>
+                                        <p class="appt-date-hint">
+                                            Please select a practitioner first
+                                        </p>
+                                    </div>
+
+                                    <!-- Time slot grid -->
+                                    <p class="appt-slots-label">Available Time Slots</p>
+                                    <div id="slot-grid" class="appt-slot-grid">
+                                        <p class="appt-slots-placeholder"
+                                           style="grid-column:1/-1;">
+                                            Select a practitioner and date to view available slots.
+                                        </p>
+                                    </div>
+
+                                    <!-- Legend -->
+                                    <div class="appt-legend">
+                                        <span>
+                                            <i class="appt-legend-dot"
+                                               style="background:#fff;"/>
+                                            Available
+                                        </span>
+                                        <span>
+                                            <i class="appt-legend-dot"
+                                               style="background:rgba(220,53,69,0.55);"/>
+                                            Booked
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- RIGHT PANEL: Booking information form -->
+                                <div class="col-md-7 appt-right">
+                                    <p class="appt-right-title">Patient Information</p>
+                                    <p class="appt-right-sub">
+                                        Please provide your details to complete the booking.
+                                    </p>
+
+                                    <!-- Full Name -->
+                                    <div class="appt-field">
+                                        <label for="appt-name">Full Name</label>
+                                        <input type="text"
+                                               id="appt-name"
+                                               name="name"
+                                               class="appt-input"
+                                               placeholder="e.g. John Doe"
+                                               required="1"/>
+                                    </div>
+
+                                    <!-- Email -->
+                                    <div class="appt-field">
+                                        <label for="appt-email">Email Address</label>
+                                        <input type="email"
+                                               id="appt-email"
+                                               name="email"
+                                               class="appt-input"
+                                               placeholder="e.g. john@example.com"
+                                               required="1"/>
+                                    </div>
+
+                                    <!-- Phone with country code picker -->
+                                    <div class="appt-field" style="position:relative;">
+                                        <label for="appt-phone">Contact Number</label>
+
+                                        <!-- Hidden fields for combined phone and country code -->
+                                        <input type="hidden" name="phone"
+                                               id="appt-phone-combined"/>
+                                        <input type="hidden" name="country_code"
+                                               id="appt-country-code-val" value="+91"/>
+
+                                        <!-- Phone input row -->
+                                        <div style="display:flex; align-items:stretch; gap:0;
+                                                    border:1.5px solid var(--appt-border);
+                                                    border-radius:10px; background:#f8fafc;
+                                                    overflow:hidden;">
+
+                                            <!-- Flag + dial code trigger -->
+                                            <div id="appt-flag-selector"
+                                                 style="display:flex; align-items:center; gap:6px;
+                                                        padding:11px 12px; cursor:pointer;
+                                                        border-right:1.5px solid var(--appt-border);
+                                                        background:#f1f5f9; white-space:nowrap;
+                                                        min-width:90px;"
+                                                 onclick="toggleFlagDropdown()">
+                                                <span id="appt-flag-display"
+                                                      style="font-size:1.2rem;">&#127470;&#127475;</span>
+                                                <span id="appt-dial-display"
+                                                      style="color:#0d9488; font-weight:600;
+                                                             font-size:.93rem;">+91</span>
+                                                <span style="color:#64748b; font-size:.7rem;">&#9660;</span>
+                                            </div>
+
+                                            <!-- Phone number input -->
+                                            <input type="text"
+                                                   id="appt-phone"
+                                                   class="appt-input"
+                                                   placeholder="Enter phone number"
+                                                   style="border:none; border-radius:0;
+                                                          background:transparent; flex:1;
+                                                          outline:none; box-shadow:none;"
+                                                   oninput="updateCombinedPhone()"
+                                                   required="1"/>
+                                        </div>
+
+                                        <small style="color:var(--appt-muted); font-size:.75rem;
+                                                      margin-top:4px; display:block;">
+                                            Select your country flag to set the dial code
+                                        </small>
+
+                                        <!-- Country dropdown -->
+                                        <div id="appt-flag-dropdown"
+                                             style="display:none; position:absolute; z-index:9999;
+                                                    background:#fff; border:1.5px solid var(--appt-border);
+                                                    border-radius:10px;
+                                                    box-shadow:0 8px 32px rgba(0,0,0,0.13);
+                                                    width:300px; max-height:260px; overflow-y:auto;
+                                                    margin-top:4px;">
+
+                                            <!-- Search box -->
+                                            <div style="padding:10px 12px;
+                                                        border-bottom:1px solid var(--appt-border);
+                                                        position:sticky; top:0; background:#fff;
+                                                        z-index:1;">
+                                                <input type="text"
+                                                       id="flag-search"
+                                                       placeholder="Search country..."
+                                                       style="width:100%;
+                                                              border:1.5px solid var(--appt-border);
+                                                              border-radius:8px; padding:7px 10px;
+                                                              font-size:.85rem; outline:none;"
+                                                       oninput="filterCountries(this.value)"/>
+                                            </div>
+
+                                            <!-- Country list -->
+                                            <ul id="country-list"
+                                                style="list-style:none; margin:0; padding:6px 0;"/>
+                                        </div>
+                                    </div>
+
+                                    <!-- Country flag picker script -->
+                                    <script>
+//<![CDATA[
+var COUNTRIES = [
+    { code: 'AF', name: 'Afghanistan',          dial: '+93',  flag: '\uD83C\uDDE6\uD83C\uDDEB' },
+    { code: 'AL', name: 'Albania',              dial: '+355', flag: '\uD83C\uDDE6\uD83C\uDDF1' },
+    { code: 'DZ', name: 'Algeria',              dial: '+213', flag: '\uD83C\uDDE9\uD83C\uDDFF' },
+    { code: 'AR', name: 'Argentina',            dial: '+54',  flag: '\uD83C\uDDE6\uD83C\uDDF7' },
+    { code: 'AU', name: 'Australia',            dial: '+61',  flag: '\uD83C\uDDE6\uD83C\uDDFA' },
+    { code: 'AT', name: 'Austria',              dial: '+43',  flag: '\uD83C\uDDE6\uD83C\uDDF9' },
+    { code: 'BH', name: 'Bahrain',              dial: '+973', flag: '\uD83C\uDDE7\uD83C\uDDED' },
+    { code: 'BD', name: 'Bangladesh',           dial: '+880', flag: '\uD83C\uDDE7\uD83C\uDDE9' },
+    { code: 'BE', name: 'Belgium',              dial: '+32',  flag: '\uD83C\uDDE7\uD83C\uDDEA' },
+    { code: 'BR', name: 'Brazil',               dial: '+55',  flag: '\uD83C\uDDE7\uD83C\uDDF7' },
+    { code: 'CA', name: 'Canada',               dial: '+1',   flag: '\uD83C\uDDE8\uD83C\uDDE6' },
+    { code: 'CN', name: 'China',                dial: '+86',  flag: '\uD83C\uDDE8\uD83C\uDDF3' },
+    { code: 'CO', name: 'Colombia',             dial: '+57',  flag: '\uD83C\uDDE8\uD83C\uDDF4' },
+    { code: 'HR', name: 'Croatia',              dial: '+385', flag: '\uD83C\uDDED\uD83C\uDDF7' },
+    { code: 'CY', name: 'Cyprus',               dial: '+357', flag: '\uD83C\uDDE8\uD83C\uDDFE' },
+    { code: 'CZ', name: 'Czech Republic',       dial: '+420', flag: '\uD83C\uDDE8\uD83C\uDDFF' },
+    { code: 'DK', name: 'Denmark',              dial: '+45',  flag: '\uD83C\uDDE9\uD83C\uDDF0' },
+    { code: 'EG', name: 'Egypt',                dial: '+20',  flag: '\uD83C\uDDEA\uD83C\uDDEC' },
+    { code: 'FI', name: 'Finland',              dial: '+358', flag: '\uD83C\uDDEB\uD83C\uDDEE' },
+    { code: 'FR', name: 'France',               dial: '+33',  flag: '\uD83C\uDDEB\uD83C\uDDF7' },
+    { code: 'DE', name: 'Germany',              dial: '+49',  flag: '\uD83C\uDDE9\uD83C\uDDEA' },
+    { code: 'GH', name: 'Ghana',                dial: '+233', flag: '\uD83C\uDDEC\uD83C\uDDED' },
+    { code: 'GR', name: 'Greece',               dial: '+30',  flag: '\uD83C\uDDEC\uD83C\uDDF7' },
+    { code: 'HK', name: 'Hong Kong',            dial: '+852', flag: '\uD83C\uDDED\uD83C\uDDF0' },
+    { code: 'HU', name: 'Hungary',              dial: '+36',  flag: '\uD83C\uDDED\uD83C\uDDFA' },
+    { code: 'IN', name: 'India',                dial: '+91',  flag: '\uD83C\uDDEE\uD83C\uDDF3' },
+    { code: 'ID', name: 'Indonesia',            dial: '+62',  flag: '\uD83C\uDDEE\uD83C\uDDE9' },
+    { code: 'IR', name: 'Iran',                 dial: '+98',  flag: '\uD83C\uDDEE\uD83C\uDDF7' },
+    { code: 'IQ', name: 'Iraq',                 dial: '+964', flag: '\uD83C\uDDEE\uD83C\uDDF6' },
+    { code: 'IE', name: 'Ireland',              dial: '+353', flag: '\uD83C\uDDEE\uD83C\uDDEA' },
+    { code: 'IL', name: 'Israel',               dial: '+972', flag: '\uD83C\uDDEE\uD83C\uDDF1' },
+    { code: 'IT', name: 'Italy',                dial: '+39',  flag: '\uD83C\uDDEE\uD83C\uDDF9' },
+    { code: 'JP', name: 'Japan',                dial: '+81',  flag: '\uD83C\uDDEF\uD83C\uDDF5' },
+    { code: 'JO', name: 'Jordan',               dial: '+962', flag: '\uD83C\uDDEF\uD83C\uDDF4' },
+    { code: 'KZ', name: 'Kazakhstan',           dial: '+7',   flag: '\uD83C\uDDF0\uD83C\uDDFF' },
+    { code: 'KE', name: 'Kenya',                dial: '+254', flag: '\uD83C\uDDF0\uD83C\uDDEA' },
+    { code: 'KW', name: 'Kuwait',               dial: '+965', flag: '\uD83C\uDDF0\uD83C\uDDFC' },
+    { code: 'LB', name: 'Lebanon',              dial: '+961', flag: '\uD83C\uDDF1\uD83C\uDDE7' },
+    { code: 'LY', name: 'Libya',                dial: '+218', flag: '\uD83C\uDDF1\uD83C\uDDFE' },
+    { code: 'MY', name: 'Malaysia',             dial: '+60',  flag: '\uD83C\uDDF2\uD83C\uDDFE' },
+    { code: 'MV', name: 'Maldives',             dial: '+960', flag: '\uD83C\uDDF2\uD83C\uDDE6' },
+    { code: 'MX', name: 'Mexico',               dial: '+52',  flag: '\uD83C\uDDF2\uD83C\uDDFD' },
+    { code: 'MA', name: 'Morocco',              dial: '+212', flag: '\uD83C\uDDF2\uD83C\uDDE6' },
+    { code: 'NP', name: 'Nepal',                dial: '+977', flag: '\uD83C\uDDF3\uD83C\uDDF5' },
+    { code: 'NL', name: 'Netherlands',          dial: '+31',  flag: '\uD83C\uDDF3\uD83C\uDDF1' },
+    { code: 'NZ', name: 'New Zealand',          dial: '+64',  flag: '\uD83C\uDDF3\uD83C\uDDFF' },
+    { code: 'NG', name: 'Nigeria',              dial: '+234', flag: '\uD83C\uDDF3\uD83C\uDDEC' },
+    { code: 'NO', name: 'Norway',               dial: '+47',  flag: '\uD83C\uDDF3\uD83C\uDDF4' },
+    { code: 'OM', name: 'Oman',                 dial: '+968', flag: '\uD83C\uDDF4\uD83C\uDDF2' },
+    { code: 'PK', name: 'Pakistan',             dial: '+92',  flag: '\uD83C\uDDF5\uD83C\uDDF0' },
+    { code: 'PS', name: 'Palestine',            dial: '+970', flag: '\uD83C\uDDF5\uD83C\uDDF8' },
+    { code: 'PH', name: 'Philippines',          dial: '+63',  flag: '\uD83C\uDDF5\uD83C\uDDED' },
+    { code: 'PL', name: 'Poland',               dial: '+48',  flag: '\uD83C\uDDF5\uD83C\uDDF1' },
+    { code: 'PT', name: 'Portugal',             dial: '+351', flag: '\uD83C\uDDF5\uD83C\uDDF9' },
+    { code: 'QA', name: 'Qatar',                dial: '+974', flag: '\uD83C\uDDF6\uD83C\uDDE6' },
+    { code: 'RO', name: 'Romania',              dial: '+40',  flag: '\uD83C\uDDF7\uD83C\uDDF4' },
+    { code: 'RU', name: 'Russia',               dial: '+7',   flag: '\uD83C\uDDF7\uD83C\uDDFA' },
+    { code: 'SA', name: 'Saudi Arabia',         dial: '+966', flag: '\uD83C\uDDF8\uD83C\uDDE6' },
+    { code: 'SG', name: 'Singapore',            dial: '+65',  flag: '\uD83C\uDDF8\uD83C\uDDEC' },
+    { code: 'ZA', name: 'South Africa',         dial: '+27',  flag: '\uD83C\uDDFF\uD83C\uDDE6' },
+    { code: 'KR', name: 'South Korea',          dial: '+82',  flag: '\uD83C\uDDF0\uD83C\uDDF7' },
+    { code: 'ES', name: 'Spain',                dial: '+34',  flag: '\uD83C\uDDEA\uD83C\uDDF8' },
+    { code: 'LK', name: 'Sri Lanka',            dial: '+94',  flag: '\uD83C\uDDF1\uD83C\uDDF0' },
+    { code: 'SD', name: 'Sudan',                dial: '+249', flag: '\uD83C\uDDF8\uD83C\uDDE9' },
+    { code: 'SE', name: 'Sweden',               dial: '+46',  flag: '\uD83C\uDDF8\uD83C\uDDEA' },
+    { code: 'CH', name: 'Switzerland',          dial: '+41',  flag: '\uD83C\uDDE8\uD83C\uDDED' },
+    { code: 'SY', name: 'Syria',                dial: '+963', flag: '\uD83C\uDDF8\uD83C\uDDFE' },
+    { code: 'TW', name: 'Taiwan',               dial: '+886', flag: '\uD83C\uDDF9\uD83C\uDDFC' },
+    { code: 'TZ', name: 'Tanzania',             dial: '+255', flag: '\uD83C\uDDF9\uD83C\uDDFF' },
+    { code: 'TH', name: 'Thailand',             dial: '+66',  flag: '\uD83C\uDDF9\uD83C\uDDED' },
+    { code: 'TN', name: 'Tunisia',              dial: '+216', flag: '\uD83C\uDDF9\uD83C\uDDF3' },
+    { code: 'TR', name: 'Turkey',               dial: '+90',  flag: '\uD83C\uDDF9\uD83C\uDDF7' },
+    { code: 'UG', name: 'Uganda',               dial: '+256', flag: '\uD83C\uDDFA\uD83C\uDDEC' },
+    { code: 'UA', name: 'Ukraine',              dial: '+380', flag: '\uD83C\uDDFA\uD83C\uDDE6' },
+    { code: 'AE', name: 'United Arab Emirates', dial: '+971', flag: '\uD83C\uDDE6\uD83C\uDDEA' },
+    { code: 'GB', name: 'United Kingdom',       dial: '+44',  flag: '\uD83C\uDDEC\uD83C\uDDE7' },
+    { code: 'US', name: 'United States',        dial: '+1',   flag: '\uD83C\uDDFA\uD83C\uDDF8' },
+    { code: 'UZ', name: 'Uzbekistan',           dial: '+998', flag: '\uD83C\uDDFA\uD83C\uDDFF' },
+    { code: 'VE', name: 'Venezuela',            dial: '+58',  flag: '\uD83C\uDDFB\uD83C\uDDEA' },
+    { code: 'VN', name: 'Vietnam',              dial: '+84',  flag: '\uD83C\uDDFB\uD83C\uDDF3' },
+    { code: 'YE', name: 'Yemen',                dial: '+967', flag: '\uD83C\uDDFE\uD83C\uDDEA' },
+    { code: 'ZM', name: 'Zambia',               dial: '+260', flag: '\uD83C\uDDFF\uD83C\uDDF2' },
+    { code: 'ZW', name: 'Zimbabwe',             dial: '+263', flag: '\uD83C\uDDFF\uD83C\uDDFC' },
+];
+
+var selectedDial = '+91';
+
+document.addEventListener('DOMContentLoaded', function () {
+    renderCountryList(COUNTRIES);
+});
+
+function renderCountryList(list) {
+    var ul = document.getElementById('country-list');
+    ul.innerHTML = '';
+    list.forEach(function (c) {
+        var li = document.createElement('li');
+        li.style.cssText = 'display:flex;align-items:center;gap:10px;padding:9px 14px;cursor:pointer;font-size:.88rem;transition:background .15s;';
+        li.innerHTML = '<span style="font-size:1.2rem;">' + c.flag + '</span>' +
+                       '<span style="flex:1;">' + c.name + '</span>' +
+                       '<span style="color:#0d9488;font-weight:600;">' + c.dial + '</span>';
+        li.onmouseover = function () { this.style.background = '#f0fdfa'; };
+        li.onmouseout  = function () { this.style.background = ''; };
+        li.onclick     = function () { selectCountry(c); };
+        ul.appendChild(li);
+    });
+}
+
+function selectCountry(c) {
+    selectedDial = c.dial;
+    document.getElementById('appt-flag-display').textContent = c.flag;
+    document.getElementById('appt-dial-display').textContent = c.dial;
+    document.getElementById('appt-country-code-val').value   = c.dial;
+    document.getElementById('appt-flag-dropdown').style.display = 'none';
+    updateCombinedPhone();
+}
+
+function toggleFlagDropdown() {
+    var dd = document.getElementById('appt-flag-dropdown');
+    dd.style.display = (dd.style.display === 'none') ? 'block' : 'none';
+    if (dd.style.display === 'block') {
+        document.getElementById('flag-search').focus();
+    }
+}
+
+function filterCountries(query) {
+    var q = query.toLowerCase();
+    var filtered = COUNTRIES.filter(function (c) {
+        return c.name.toLowerCase().indexOf(q) !== -1 || c.dial.indexOf(q) !== -1;
+    });
+    renderCountryList(filtered);
+}
+
+function updateCombinedPhone() {
+    var num = document.getElementById('appt-phone').value.trim();
+    document.getElementById('appt-phone-combined').value = selectedDial + ' ' + num;
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function (e) {
+    var selector = document.getElementById('appt-flag-selector');
+    var dropdown = document.getElementById('appt-flag-dropdown');
+    if (dropdown && selector) {
+        if (!selector.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.style.display = 'none';
+        }
+    }
+});
+//]]>
+                                    </script>
+
+                                    <!-- Doctor selection -->
+                                    <div class="appt-field">
+                                        <label for="doctor_id">Select Practitioner</label>
+                                        <select name="doctor_id"
+                                                id="doctor_id"
+                                                class="appt-input"
+                                                required="1">
+                                            <option value="">-- Choose a Practitioner --</option>
+                                            <t t-foreach="doctors" t-as="doc">
+                                                <option t-att-value="doc.id">
+                                                    <t t-esc="doc.name"/>
+                                                </option>
+                                            </t>
+                                        </select>
+                                    </div>
+
+                                    <!-- Booking summary strip -->
+                                    <div class="appt-summary" id="appt-summary">
+                                        <span id="summary-text">
+                                            Your booking details will appear here.
+                                        </span>
+                                    </div>
+
+                                    <!-- Confirm button -->
+                                    <button type="submit" class="appt-submit-btn">
+                                        Confirm Appointment
+                                    </button>
+
+                                </div>
+                                <!-- END RIGHT PANEL -->
+
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- QR page link -->
+                    <div class="text-center mt-4">
+                        <a href="/book-appointment/qr"
+                           class="btn btn-outline-success rounded-pill px-4">
+                            <i class="fa fa-qrcode me-2"/>Scan to Book on Your Phone
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Slot grid rendering logic is handled in appointment_slots.js -->
+
+        </t>
+    </template>
+
+    <!-- ================================================================
+         QR PAGE
+         ================================================================ -->
+    <template id="website_appointment_qr" name="Appointment Booking QR">
+        <t t-call="website.layout">
+            <t t-set="head">
+                <style>
+                    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&amp;family=Playfair+Display:wght@600&amp;display=swap');
+                    .appt-qr-page {
+                        background: linear-gradient(135deg, #f0fdfa 0%, #e0f2fe 100%);
+                        min-height: 100vh;
+                        padding: 48px 0 64px;
+                        font-family: 'DM Sans', sans-serif;
+                        color: #1e293b;
+                    }
+                </style>
+            </t>
+            <div class="appt-qr-page">
+            <div class="container">
+                <h2 class="text-center"
+                    style="font-family:'Playfair Display',serif; font-weight:600; font-size:2.1rem; color:#0f766e;">
+                    Book an Appointment
+                </h2>
+                <p class="text-center text-muted mb-4">
+                    Choose your doctor, pick a date and confirm your slot in seconds.
+                </p>
+                <div class="row justify-content-center">
+                    <div class="col-md-5 col-lg-4">
+                        <div class="card shadow-sm border-0 text-center p-4"
+                             style="border-radius:18px;">
+                            <h5 style="color:#0d9488;">Scan to Book on Your Phone</h5>
+                            <p class="text-muted small">
+                                Open this form directly on your mobile device
+                            </p>
+                            <div>
+                                <img t-att-src="'data:image/png;base64,%s' % qr_image"
+                                     width="200" height="200"
+                                     alt="QR code for mobile booking"/>
+                            </div>
+                            <small class="text-muted mt-2">
+                                <t t-esc="booking_url"/>
+                            </small>
+                        </div>
+                        <div class="text-center mt-4">
+                            <a href="/book-appointment"
+                               class="btn btn-success rounded-pill px-4">
+                                Book Here Instead
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- ================================================================
+         THANK YOU PAGE
+         ================================================================ -->
+    <template id="website_thank_you" name="Appointment Confirmed">
+        <t t-call="website.layout">
+            <div class="container py-5 text-center">
+                <div class="mx-auto" style="max-width:520px;">
+                    <div style="font-size:3.5rem; margin-bottom:16px;">&#9989;</div>
+                    <h2 style="font-family:'Playfair Display',serif; color:#0f766e;
+                               margin-bottom:12px;">
+                        Appointment Confirmed
+                    </h2>
+                    <p class="lead text-muted mb-2">
+                        Thank you. Your appointment has been booked successfully.
+                    </p>
+                    <p class="text-muted mb-1">
+                        <strong>Appointment No.:</strong>
+                        <t t-if="appointment" t-esc="appointment.appointment_no"/>
+                        <t t-else="">-</t>
+                    </p>
+                    <p class="text-muted mb-4">
+                        A confirmation email will be sent to your registered email address.
+                    </p>
+                    <a href="/book-appointment"
+                       class="btn btn-lg"
+                       style="background:#0d9488; color:#fff; border-radius:12px;
+                              padding:12px 32px; font-weight:600;">
+                        Book Another Appointment
+                    </a>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- ================================================================
+         ERROR PAGE
+         ================================================================ -->
+    <template id="website_appointment_error" name="Appointment Error">
+        <t t-call="website.layout">
+            <div class="container py-5 text-center">
+                <div class="mx-auto" style="max-width:520px;">
+                    <div style="font-size:3.5rem; margin-bottom:16px;">&#9888;&#65039;</div>
+                    <h2 class="text-danger mb-3">Slot Unavailable</h2>
+                    <p class="lead text-muted">
+                        <t t-esc="error_message"/>
+                    </p>
+                    <t t-if="doctor_name">
+                        <p class="text-muted">
+                            Practitioner:
+                            <strong><t t-esc="doctor_name"/></strong>
+                        </p>
+                    </t>
+                    <a href="/book-appointment"
+                       class="btn btn-lg mt-3"
+                       style="background:#0d9488; color:#fff; border-radius:12px;
+                              padding:12px 32px; font-weight:600;">
+                        Try Again
+                    </a>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- ================================================================
+         PAYMENT PAGE
+         ================================================================ -->
+    <template id="website_appointment_payment" name="Appointment Payment">
+        <t t-call="website.layout">
+            <div class="container py-5">
+
+                <h2 class="text-center mb-4"
+                    style="font-family:'Playfair Display',serif; color:#0f766e;">
+                    Appointment Summary
+                </h2>
+
+                <!-- Appointment summary card -->
+                <div class="card mb-4"
+                     style="border-radius:14px; overflow:hidden;
+                            box-shadow:0 4px 24px rgba(13,148,136,.10);">
+                    <div class="card-header text-white" style="background:#0d9488;">
+                        <h5 class="mb-0">Booking Details</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p>
+                                    <strong>Appointment No.:</strong>
+                                    <t t-esc="appointment.appointment_no"/>
+                                </p>
+                                <p>
+                                    <strong>Patient:</strong>
+                                    <t t-esc="appointment.patient_id.name"/>
+                                </p>
+                                <p>
+                                    <strong>Patient Code:</strong>
+                                    <t t-esc="appointment.patient_code or 'N/A'"/>
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <p>
+                                    <strong>Practitioner:</strong>
+                                    <t t-esc="appointment.doctor_id.name"/>
+                                </p>
+                                <p>
+                                    <strong>Date &amp; Time:</strong>
+                                    <span t-field="appointment.appointment_date"
+                                          t-options="{'widget': 'datetime'}"/>
+                                </p>
+                                <p>
+                                    <strong>Duration:</strong>
+                                    <t t-esc="appointment.slot_duration or 'N/A'"/>
+                                    <t t-if="appointment.slot_duration"> min</t>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Confirmation message -->
+                <div class="alert alert-success text-center"
+                     style="border-radius:12px; font-size:18px; font-weight:600;">
+                    Your appointment has been booked successfully.
+                </div>
+
+                <!-- Action buttons -->
+                <div class="text-center mt-3">
+                    <a href="/my/appointments" class="btn btn-outline-primary me-2"
+                       style="border-radius:10px;">
+                        View My Appointments
+                    </a>
+                    <a t-att-href="'/appointment/payment/cancel?appointment_id=%s' % appointment.id"
+                       class="btn btn-outline-danger"
+                       style="border-radius:10px;">
+                        Cancel Appointment
+                    </a>
+                </div>
+
+            </div>
+        </t>
+    </template>
+
+</odoo>

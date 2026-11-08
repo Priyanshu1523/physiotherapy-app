@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!--                  SPECIALIZATION LIST VIEW                    -->
+    <!-- ============================================================ -->
+
+    <record id="view_medical_specialist_list" model="ir.ui.view">
+        <field name="name">medical.specialist.list</field>
+        <field name="model">medical.specialist</field>
+        <field name="arch" type="xml">
+            <list string="Specializations" editable="bottom">
+                <field name="name" required="True"/>
+                <field name="code"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--                 SPECIALIZATION ACTION WINDOW                 -->
+    <!-- ============================================================ -->
+
+    <record id="action_medical_specialist" model="ir.actions.act_window">
+        <field name="name">Specializations</field>
+        <field name="res_model">medical.specialist</field>
+        <field name="view_mode">list</field>
+    </record>
+
+</odoo>

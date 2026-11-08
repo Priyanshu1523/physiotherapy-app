@@ -33,6 +33,7 @@ import {
   Printer,
   Shield,
 } from 'lucide-react';
+import PaymentModal from '../components/PaymentModal';
 
 export default function WebsiteView({ onEnterPortal, currentUser, onOpenAuthModal, onLogout }) {
   const [doctors, setDoctors] = useState([]);
@@ -55,6 +56,11 @@ export default function WebsiteView({ onEnterPortal, currentUser, onOpenAuthModa
   const [clinicalComplaint, setClinicalComplaint] = useState('');
   const [bookingSuccess, setBookingSuccess] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Online Payment State
+  const [paymentChoice, setPaymentChoice] = useState('online'); // 'online' | 'clinic'
+  const [isOnlinePayModalOpen, setIsOnlinePayModalOpen] = useState(false);
+  const [pendingBookingData, setPendingBookingData] = useState(null);
 
   // FAQ Accordion State
   const [openFaqIndex, setOpenFaqIndex] = useState(0);
@@ -143,6 +149,9 @@ export default function WebsiteView({ onEnterPortal, currentUser, onOpenAuthModa
       const apptDateTime = new Date(selectedDate);
       apptDateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
 
+      const doctor = doctors.find((d) => String(d.id) === String(selectedDocId));
+      const consultationFee = doctor?.consultation_fee || 600;
+
       const res = await api.createAppointment({
         doctor_id: selectedDocId,
         shift_id: selectedShiftId || 1,
@@ -157,13 +166,34 @@ export default function WebsiteView({ onEnterPortal, currentUser, onOpenAuthModa
       });
 
       if (res.success) {
-        setBookingSuccess(res.data);
+        if (paymentChoice === 'online') {
+          setPendingBookingData({ ...res.data, consultation_fee: consultationFee });
+          setIsOnlinePayModalOpen(true);
+        } else {
+          setBookingSuccess({
+            ...res.data,
+            payment_status: 'unpaid',
+            payment_method: 'pay_at_clinic',
+          });
+        }
       }
     } catch (err) {
       alert('Booking error: ' + err.message);
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleOnlinePaymentSuccess = (paymentDetails) => {
+    setIsOnlinePayModalOpen(false);
+    setBookingSuccess({
+      ...pendingBookingData,
+      payment_status: 'paid',
+      payment_ref: paymentDetails.transaction_id,
+      payment_method: paymentDetails.payment_method,
+      amount_paid: paymentDetails.amount,
+      receipt_no: paymentDetails.receipt_no,
+    });
   };
 
   const scrollToBooking = (docId = null) => {
@@ -924,9 +954,49 @@ export default function WebsiteView({ onEnterPortal, currentUser, onOpenAuthModa
               <h3 style={{ fontSize: '1.6rem', fontWeight: 900, color: '#14532d', marginBottom: '0.5rem' }}>
                 Appointment Confirmed!
               </h3>
-              <p style={{ color: '#15803d', fontSize: '1rem', marginBottom: '1.75rem' }}>
+              <p style={{ color: '#15803d', fontSize: '1rem', marginBottom: '1.25rem' }}>
                 Your appointment slip has been registered under reference <strong>{bookingSuccess.appointment_no}</strong> with {bookingSuccess.doctor_name}.
               </p>
+
+              {bookingSuccess.payment_status === 'paid' ? (
+                <div style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  backgroundColor: '#dcfce7',
+                  border: '1px solid #86efac',
+                  color: '#15803d',
+                  padding: '0.5rem 1.25rem',
+                  borderRadius: '9999px',
+                  fontWeight: 700,
+                  fontSize: '0.85rem',
+                  marginBottom: '1.5rem',
+                }}>
+                  <CheckCircle2 size={18} />
+                  <span>
+                    Online Payment Verified: ₹{bookingSuccess.amount_paid || 600} • Receipt #{bookingSuccess.receipt_no || bookingSuccess.payment_ref}
+                  </span>
+                </div>
+              ) : (
+                <div style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  backgroundColor: '#fef3c7',
+                  border: '1px solid #fde68a',
+                  color: '#b45309',
+                  padding: '0.5rem 1.25rem',
+                  borderRadius: '9999px',
+                  fontWeight: 700,
+                  fontSize: '0.85rem',
+                  marginBottom: '1.5rem',
+                }}>
+                  <Clock size={16} />
+                  <span>
+                    Consultation Fee Payable at Reception Desk During Visit
+                  </span>
+                </div>
+              )}
 
               {/* REAL GENERATED APPOINTMENT QR CODE */}
               <div style={{
@@ -1119,6 +1189,81 @@ export default function WebsiteView({ onEnterPortal, currentUser, onOpenAuthModa
                   onChange={(e) => setClinicalComplaint(e.target.value)}
                   style={{ width: '100%', padding: '0.65rem', borderRadius: '0.5rem', border: '1px solid #cbd5e1', fontSize: '0.9rem' }}
                 ></textarea>
+              </div>
+
+              {/* Payment Mode Selection */}
+              <div>
+                <label style={{ fontSize: '0.85rem', fontWeight: 700, color: '#334155', display: 'block', marginBottom: '0.5rem' }}>
+                  4. Payment Preference
+                </label>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '0.85rem' }}>
+                  <div
+                    onClick={() => setPaymentChoice('online')}
+                    style={{
+                      padding: '1rem',
+                      borderRadius: '0.75rem',
+                      border: paymentChoice === 'online' ? '2px solid #0284c7' : '1px solid #cbd5e1',
+                      backgroundColor: paymentChoice === 'online' ? '#f0f9ff' : '#ffffff',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: '0.75rem',
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    <input
+                      type="radio"
+                      name="paymentChoice"
+                      checked={paymentChoice === 'online'}
+                      onChange={() => setPaymentChoice('online')}
+                      style={{ cursor: 'pointer', marginTop: '3px' }}
+                    />
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.2rem' }}>
+                        <strong style={{ fontSize: '0.92rem', color: '#0f172a' }}>
+                          ⚡ Pay Consultation Online (₹{doctors.find((d) => String(d.id) === String(selectedDocId))?.consultation_fee || 600})
+                        </strong>
+                        <span style={{ backgroundColor: '#dcfce7', color: '#16a34a', fontSize: '0.7rem', fontWeight: 700, padding: '1px 6px', borderRadius: '4px' }}>
+                          Instant Confirm
+                        </span>
+                      </div>
+                      <span style={{ fontSize: '0.78rem', color: '#64748b', display: 'block' }}>
+                        Scan UPI QR (GPay, PhonePe, Paytm) or pay via Debit/Credit Cards & NetBanking
+                      </span>
+                    </div>
+                  </div>
+
+                  <div
+                    onClick={() => setPaymentChoice('clinic')}
+                    style={{
+                      padding: '1rem',
+                      borderRadius: '0.75rem',
+                      border: paymentChoice === 'clinic' ? '2px solid #0284c7' : '1px solid #cbd5e1',
+                      backgroundColor: paymentChoice === 'clinic' ? '#f0f9ff' : '#ffffff',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: '0.75rem',
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    <input
+                      type="radio"
+                      name="paymentChoice"
+                      checked={paymentChoice === 'clinic'}
+                      onChange={() => setPaymentChoice('clinic')}
+                      style={{ cursor: 'pointer', marginTop: '3px' }}
+                    />
+                    <div>
+                      <strong style={{ fontSize: '0.92rem', color: '#0f172a', display: 'block', marginBottom: '0.2rem' }}>
+                        Pay at Clinic Reception
+                      </strong>
+                      <span style={{ fontSize: '0.78rem', color: '#64748b', display: 'block' }}>
+                        Reserve slot now and pay during your consultation visit via cash, UPI, or card
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', borderTop: '1px solid #e2e8f0', paddingTop: '1.25rem' }}>
@@ -1314,7 +1459,20 @@ export default function WebsiteView({ onEnterPortal, currentUser, onOpenAuthModa
         </div>
       )}
 
-      {/* 12. PROFESSIONAL HEALTHCARE FOOTER */}
+      {/* 12. ONLINE PAYMENT GATEWAY MODAL (UPI / CARDS / NETBANKING) */}
+      {isOnlinePayModalOpen && pendingBookingData && (
+        <PaymentModal
+          isOpen={isOnlinePayModalOpen}
+          onClose={() => setIsOnlinePayModalOpen(false)}
+          amount={pendingBookingData.consultation_fee || 600}
+          appointmentId={pendingBookingData.id}
+          patientName={pendingBookingData.patient_name || patientName}
+          description={`Consultation with ${pendingBookingData.doctor_name || 'Senior Physiotherapist'}`}
+          onPaymentSuccess={handleOnlinePaymentSuccess}
+        />
+      )}
+
+      {/* 13. PROFESSIONAL HEALTHCARE FOOTER */}
       <footer style={{ backgroundColor: '#0f172a', color: '#cbd5e1', padding: '4.5rem 2.5rem 2.5rem', borderTop: '1px solid #1e293b' }}>
         <div style={{ maxWidth: '1240px', margin: '0 auto', display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '3.5rem', marginBottom: '3.5rem' }}>
           <div>

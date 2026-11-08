@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!--                 DOCTOR FORM (inherit hr.employee)            -->
+    <!-- ============================================================ -->
+
+    <record id="view_hr_employee_doctor_form" model="ir.ui.view">
+        <field name="name">hr.employee.doctor.form.inherit</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Add doctor fields before work_email -->
+            <xpath expr="//field[@name='private_email']" position="before">
+                <field name="is_doctor"/>
+                <field name="physio_employee_type"/>
+                <field name="registration_no"
+                       invisible="not is_doctor"/>
+            </xpath>
+
+            <!-- Add gender after work_email -->
+            <xpath expr="//field[@name='work_email']" position="after">
+                <field name="sex" widget="radio"
+                       invisible="not is_doctor"/>
+            </xpath>
+
+            <!-- Add date_of_birth and age before department_id -->
+            <xpath expr="//field[@name='department_id']" position="before">
+                <field name="date_of_birth"
+                       invisible="not is_doctor"/>
+                <field name="doctor_age" readonly="1"
+                       invisible="not is_doctor"/>
+            </xpath>
+
+            <!-- Replace job_id with specialization_id -->
+            <xpath expr="//field[@name='job_id']" position="replace">
+                <field name="specialization_id"
+                       invisible="not is_doctor"
+                       placeholder="Select Specialization"/>
+            </xpath>
+
+            <!-- Make work_email required for doctors -->
+            <xpath expr="//field[@name='work_email']" position="attributes">
+                <attribute name="required">is_doctor</attribute>
+            </xpath>
+
+            <!-- Hide irrelevant fields -->
+            <xpath expr="//field[@name='category_ids']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='parent_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <!-- Hide HR Settings page for doctors -->
+            <xpath expr="//page[@name='hr_settings']" position="attributes">
+                <attribute name="invisible">is_doctor</attribute>
+            </xpath>
+
+            <!-- Add Working Shifts tab after personal information -->
+            <xpath expr="//page[@name='personal_information']" position="after">
+                <page string="Working Shifts"
+                      name="working_shifts"
+                      invisible="not is_doctor">
+                    <field name="time_shift_ids" widget="many2many_tags"/>
+                    <separator string="Assigned Shift Details"/>
+                    <field name="time_shift_ids" mode="list" >
+                        <list>
+                            <field name="name"/>
+                            <field name="shift_type"/>
+                            <field name="start_time" widget="float_time"/>
+                            <field name="end_time" widget="float_time"/>
+                            <field name="slot_duration"/>
+                            <field name="max_appointments"/>
+                            <field name="working_day_ids" widget="many2many_tags"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--                 DOCTOR LIST (inherit hr.employee)            -->
+    <!-- ============================================================ -->
+
+    <record id="view_hr_employee_doctor_list" model="ir.ui.view">
+        <field name="name">hr.employee.doctor.list.inherit</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='job_id']" position="replace">
+                <field name="specialization_id" string="Specialization"/>
+            </xpath>
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="registration_no" optional="show"/>
+                <field name="sex" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--                 DOCTOR SEARCH VIEW                           -->
+    <!-- ============================================================ -->
+
+    <record id="view_hr_employee_doctor_search" model="ir.ui.view">
+        <field name="name">hr.employee.doctor.search</field>
+        <field name="model">hr.employee</field>
+        <field name="arch" type="xml">
+            <search string="Search Doctors">
+                <field name="name"/>
+                <field name="registration_no"/>
+                <field name="specialization_id"/>
+                <field name="work_email"/>
+
+                <filter name="filter_is_doctor"
+                        string="Doctors Only"
+                        domain="[('is_doctor', '=', True)]"/>
+
+                <separator/>
+
+                <group>
+                    <filter name="group_by_specialization"
+                            string="Specialization"
+                            domain="[]" context="{'group_by': 'specialization_id'}"/>
+                    <filter name="group_by_employee_type"
+                            string="Employee Type"
+                            domain="[]" context="{'group_by': 'physio_employee_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--                     DOCTOR ACTION WINDOW                     -->
+    <!-- ============================================================ -->
+
+    <record id="action_doctor_list" model="ir.actions.act_window">
+        <field name="name">Doctors</field>
+        <field name="res_model">hr.employee</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_doctor', '=', True)]</field>
+        <field name="context">{
+            'default_is_doctor': True,
+            'default_physio_employee_type': 'doctor',
+            'search_default_filter_is_doctor': 1,
+        }</field>
+        <field name="search_view_id" ref="view_hr_employee_doctor_search"/>
+    </record>
+
+</odoo>

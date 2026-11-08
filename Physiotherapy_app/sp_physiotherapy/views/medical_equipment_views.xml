@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!--                   EQUIPMENT FORM VIEW                        -->
+    <!-- ============================================================ -->
+
+    <record id="view_medical_equipment_form" model="ir.ui.view">
+        <field name="name">medical.equipment.form</field>
+        <field name="model">medical.equipment</field>
+        <field name="arch" type="xml">
+            <form string="Medical Equipment">
+
+                <header>
+                    <button name="action_activate"
+                            type="object"
+                            string="Activate"
+                            class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_maintenance"
+                            type="object"
+                            string="Send to Maintenance"
+                            invisible="state != 'active'"/>
+                    <button name="action_reset_draft"
+                            type="object"
+                            string="Back to Draft"
+                            invisible="state != 'maintenance'"/>
+                    <button name="action_retire"
+                            type="object"
+                            string="Retire"
+                            confirm="Are you sure you want to retire this equipment?"
+                            invisible="state in ('draft', 'retired')"/>
+                    <button name="action_reset_draft"
+                            type="object"
+                            string="Reset to Draft"
+                            invisible="state not in ('active', 'retired')"/>
+
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,active,retired"/>
+                </header>
+
+                <sheet>
+                    <group>
+                        <group string="Equipment Details">
+                            <field name="product_id"/>
+                            <field name="serial_number"/>
+                            <field name="department"/>
+                            <field name="assigned_to"/>
+                        </group>
+                        <group string="Dates">
+                            <field name="acquisition_date" readonly="1"/>
+                            <field name="retirement_date" readonly="1"/>
+                            <field name="company_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <group string="Notes">
+                        <field name="notes" nolabel="1"
+                               placeholder="Maintenance history, usage notes..."/>
+                    </group>
+                </sheet>
+
+                <chatter/>
+
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--                   EQUIPMENT LIST VIEW                        -->
+    <!-- ============================================================ -->
+
+    <record id="view_medical_equipment_list" model="ir.ui.view">
+        <field name="name">medical.equipment.list</field>
+        <field name="model">medical.equipment</field>
+        <field name="arch" type="xml">
+            <list string="Medical Equipment"
+                  decoration-success="state == 'active'"
+                  decoration-warning="state == 'maintenance'"
+                  decoration-muted="state == 'retired'">
+                <field name="name"/>
+                <field name="product_id"/>
+                <field name="serial_number"/>
+                <field name="department" optional="show"/>
+                <field name="assigned_to" optional="show"/>
+                <field name="acquisition_date" optional="show"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-success="state == 'active'"
+                       decoration-warning="state == 'maintenance'"
+                       decoration-danger="state == 'retired'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--                  EQUIPMENT SEARCH VIEW                       -->
+    <!-- ============================================================ -->
+
+    <record id="view_medical_equipment_search" model="ir.ui.view">
+        <field name="name">medical.equipment.search</field>
+        <field name="model">medical.equipment</field>
+        <field name="arch" type="xml">
+            <search string="Search Equipment">
+                <field name="name"/>
+                <field name="serial_number"/>
+                <field name="department"/>
+                <field name="assigned_to"/>
+
+                <filter name="filter_active"
+                        string="Active"
+                        domain="[('state', '=', 'active')]"/>
+                <filter name="filter_maintenance"
+                        string="Under Maintenance"
+                        domain="[('state', '=', 'maintenance')]"/>
+                <filter name="filter_retired"
+                        string="Retired"
+                        domain="[('state', '=', 'retired')]"/>
+
+                <separator/>
+
+                <group>
+                    <filter name="group_by_state"
+                            string="Status"
+                            domain="[]" context="{'group_by': 'state'}"/>
+                    <filter name="group_by_department"
+                            string="Department"
+                            domain="[]" context="{'group_by': 'department'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--                  EQUIPMENT ACTION WINDOW                     -->
+    <!-- ============================================================ -->
+
+    <record id="action_medical_equipment" model="ir.actions.act_window">
+        <field name="name">Medical Equipment</field>
+        <field name="res_model">medical.equipment</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_medical_equipment_search"/>
+    </record>
+
+</odoo>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!--            SETTINGS FORM (inherit res.config.settings)       -->
+    <!-- ============================================================ -->
+
+    <record id="view_res_config_settings_physio_form" model="ir.ui.view">
+        <field name="name">res.config.settings.physio.form</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+
+                <app data-string="Physiotherapy"
+                     string="Physiotherapy"
+                     name="sp_physiotherapy"
+                     groups="sp_physiotherapy.group_physiotherapy_admin">
+
+                    <!-- Twilio SMS Configuration -->
+                    <block title="Twilio SMS Configuration"
+                           help="Configure Twilio for sending SMS appointment reminders to patients.">
+                        <setting string="Enable Twilio SMS"
+                                 help="Enable SMS notifications via Twilio for appointment reminders.">
+                            <field name="twilio_enabled"/>
+                        </setting>
+                        <setting string="Twilio Account SID"
+                                 invisible="not twilio_enabled">
+                            <field name="twilio_account_sid"
+                                   placeholder="ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"/>
+                        </setting>
+                        <setting string="Twilio Auth Token"
+                                 invisible="not twilio_enabled">
+                            <field name="twilio_auth_token"
+                                   password="True"
+                                   placeholder="Your Twilio Auth Token"/>
+                        </setting>
+                        <setting string="Twilio Phone Number"
+                                 invisible="not twilio_enabled">
+                            <field name="twilio_phone_number"
+                                   placeholder="+1234567890"/>
+                        </setting>
+                    </block>
+
+                    <!-- Zoom Configuration -->
+                    <block title="Zoom Video Consultation"
+                           help="Configure Zoom integration for video consultations.">
+                        <setting string="Enable Zoom"
+                                 help="Enable Zoom video meeting creation for appointments.">
+                            <field name="zoom_enabled"/>
+                        </setting>
+                        <setting string="Zoom Client ID"
+                                 invisible="not zoom_enabled">
+                            <field name="zoom_client_id"
+                                   placeholder="Your Zoom Client ID"/>
+                        </setting>
+                        <setting string="Zoom Client Secret"
+                                 invisible="not zoom_enabled">
+                            <field name="zoom_client_secret"
+                                   password="True"
+                                   placeholder="Your Zoom Client Secret"/>
+                        </setting>
+                        <setting string="Zoom Account ID"
+                                 invisible="not zoom_enabled">
+                            <field name="zoom_account_id"
+                                   placeholder="Your Zoom Account ID"/>
+                        </setting>
+                    </block>
+
+                    <!-- Appointment Reminders -->
+                    <block title="Appointment Reminders"
+                           help="Configure automatic appointment reminder timing.">
+                        <setting string="Reminder Timing"
+                                 help="How many hours before an appointment should the reminder be sent.">
+                            <field name="appointment_reminder_hours"/>
+                            <span class="text-muted ms-1">hours before appointment</span>
+                        </setting>
+                    </block>
+
+                </app>
+
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--                  SETTINGS ACTION WINDOW                      -->
+    <!-- ============================================================ -->
+
+    <record id="action_physio_config_settings" model="ir.actions.act_window">
+        <field name="name">Physiotherapy Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">main</field>
+        <field name="context">{'module': 'sp_physiotherapy'}</field>
+    </record>
+
+</odoo>

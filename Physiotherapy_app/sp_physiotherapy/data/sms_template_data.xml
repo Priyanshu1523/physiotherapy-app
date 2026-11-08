@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo noupdate="1">
+    <record id="sms_template_appointment_reminder" model="sms.template">
+        <field name="name">Appointment Reminder</field>
+        <field name="model_id" ref="model_medical_appointment"/>
+        <field name="body">Reminder: You have an appointment ({{ object.appointment_no }}) on {{ object.appointment_date.strftime('%d %b %Y %I:%M %p') }} with Dr. {{ object.doctor_id.name }}. Please arrive 10 minutes early.</field>
+    </record>
+
+    <record id="sms_template_appointment_confirmed" model="sms.template">
+        <field name="name">Appointment Confirmed SMS</field>
+        <field name="model_id" ref="model_medical_appointment"/>
+        <field name="body">Your appointment {{ object.appointment_no }} with Dr. {{ object.doctor_id.name }} on {{ object.appointment_date.strftime('%d %b %Y %I:%M %p') }} has been confirmed.</field>
+    </record>
+</odoo>

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!--                      ROOT MENU                               -->
+    <!-- ============================================================ -->
+
+    <menuitem id="menu_physiotherapy_root"
+              name="Physiotherapy Management"
+              sequence="10"
+              web_icon="sp_physiotherapy,static/description/icon.png"/>
+
+    <!-- ============================================================ -->
+    <!--                    APPOINTMENTS                              -->
+    <!-- ============================================================ -->
+
+    <menuitem id="menu_appointment_parent"
+              name="Appointments"
+              parent="menu_physiotherapy_root"
+              sequence="10"/>
+
+    <menuitem id="menu_appointment_all"
+              name="All Appointments"
+              parent="menu_appointment_parent"
+              action="action_medical_appointment"
+              sequence="10"/>
+
+    <menuitem id="menu_appointment_calendar"
+              name="Calendar"
+              parent="menu_appointment_parent"
+              action="action_medical_appointment_calendar"
+              sequence="20"/>
+
+    <!-- ============================================================ -->
+    <!--                      PATIENTS                                -->
+    <!-- ============================================================ -->
+
+    <menuitem id="menu_patient"
+              name="Patients"
+              parent="menu_physiotherapy_root"
+              action="action_patient_list"
+              sequence="20"/>
+
+    <!-- ============================================================ -->
+    <!--                    PRESCRIPTIONS                             -->
+    <!-- ============================================================ -->
+
+    <menuitem id="menu_prescription"
+              name="Prescriptions"
+              parent="menu_physiotherapy_root"
+              action="action_medical_prescription"
+              sequence="30"/>
+
+    <!-- ============================================================ -->
+    <!--                       DOCTORS                                -->
+    <!-- ============================================================ -->
+
+    <menuitem id="menu_doctor"
+              name="Doctors"
+              parent="menu_physiotherapy_root"
+              action="action_doctor_list"
+              sequence="40"/>
+
+    <!-- ============================================================ -->
+    <!--                    CONFIGURATION                             -->
+    <!-- ============================================================ -->
+
+    <menuitem id="menu_configuration"
+              name="Configuration"
+              parent="menu_physiotherapy_root"
+              sequence="90"
+              groups="sp_physiotherapy.group_physiotherapy_admin"/>
+
+    <menuitem id="menu_config_specialization"
+              name="Specializations"
+              parent="menu_configuration"
+              action="action_medical_specialist"
+              sequence="10"/>
+
+    <menuitem id="menu_config_treatment"
+              name="Treatments"
+              parent="menu_configuration"
+              action="action_medical_treatment"
+              sequence="20"/>
+
+    <menuitem id="menu_config_treatment_category"
+              name="Treatment Categories"
+              parent="menu_configuration"
+              action="action_treatment_category"
+              sequence="30"/>
+
+    <menuitem id="menu_config_time_shift"
+              name="Time Shifts"
+              parent="menu_configuration"
+              action="action_medical_time_shift"
+              sequence="40"/>
+
+    <menuitem id="menu_config_medicine_frequency"
+              name="Medicine Frequencies"
+              parent="menu_configuration"
+              action="action_medicine_frequency"
+              sequence="60"/>
+
+    <menuitem id="menu_config_source"
+              name="Patient Sources"
+              parent="menu_configuration"
+              action="action_medical_source"
+              sequence="70"/>
+
+    <menuitem id="menu_config_question"
+              name="Questions"
+              parent="menu_configuration"
+              action="action_medical_question"
+              sequence="80"/>
+
+    <menuitem id="menu_config_settings"
+              name="Settings"
+              parent="menu_configuration"
+              action="action_physio_config_settings"
+              sequence="100"/>
+
+    <!-- ============================================================ -->
+    <!--                      MEDICINES                               -->
+    <!-- ============================================================ -->
+
+    <menuitem id="menu_medicine"
+              name="Medicines"
+              parent="menu_physiotherapy_root"
+              action="action_medical_medicine"
+              sequence="60"/>
+
+    <!-- ============================================================ -->
+    <!--                      EQUIPMENT                               -->
+    <!-- ============================================================ -->
+
+    <menuitem id="menu_equipment"
+              name="Equipment"
+              parent="menu_physiotherapy_root"
+              action="action_medical_equipment"
+              sequence="70"/>
+
+    <!-- ============================================================ -->
+    <!--                       REPORTS                                -->
+    <!-- ============================================================ -->
+
+    <menuitem id="menu_reports"
+              name="Reports"
+              parent="menu_physiotherapy_root"
+              sequence="80"/>
+
+    <menuitem id="menu_reports_payment_log"
+              name="Payment Log"
+              parent="menu_reports"
+              action="action_medical_payment_log"
+              sequence="10"/>
+
+    <menuitem id="menu_reports_xray"
+              name="X-Ray Reports"
+              parent="menu_reports"
+              action="action_xray_report"
+              sequence="20"/>
+
+</odoo>

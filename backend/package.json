@@ -14,7 +14,7 @@
     "postgresql",
     "express"
   ],
-  "author": "Admionix Solutions / Converted to Full-Stack MERN/PERN",
+  "author": "Supriya Technology",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^3.0.2",

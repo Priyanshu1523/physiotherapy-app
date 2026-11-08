@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!--                 TREATMENT CATEGORY LIST VIEW                 -->
+    <!-- ============================================================ -->
+
+    <record id="view_treatment_category_list" model="ir.ui.view">
+        <field name="name">treatment.category.list</field>
+        <field name="model">treatment.category</field>
+        <field name="arch" type="xml">
+            <list string="Treatment Categories" editable="bottom">
+                <field name="name" required="True"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--                 TREATMENT CATEGORY FORM VIEW                 -->
+    <!-- ============================================================ -->
+
+    <record id="view_treatment_category_form" model="ir.ui.view">
+        <field name="name">treatment.category.form</field>
+        <field name="model">treatment.category</field>
+        <field name="arch" type="xml">
+            <form string="Treatment Category">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--                TREATMENT CATEGORY ACTION WINDOW              -->
+    <!-- ============================================================ -->
+
+    <record id="action_treatment_category" model="ir.actions.act_window">
+        <field name="name">Treatment Categories</field>
+        <field name="res_model">treatment.category</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!--                MEDICINE FREQUENCY LIST VIEW                  -->
+    <!-- ============================================================ -->
+
+    <record id="view_medicine_frequency_list" model="ir.ui.view">
+        <field name="name">medicine.frequency.list</field>
+        <field name="model">medicine.frequency</field>
+        <field name="arch" type="xml">
+            <list string="Medicine Frequencies" editable="bottom">
+                <field name="code" required="True"/>
+                <field name="name" required="True"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--               MEDICINE FREQUENCY ACTION WINDOW               -->
+    <!-- ============================================================ -->
+
+    <record id="action_medicine_frequency" model="ir.actions.act_window">
+        <field name="name">Medicine Frequencies</field>
+        <field name="res_model">medicine.frequency</field>
+        <field name="view_mode">list</field>
+    </record>
+
+</odoo>

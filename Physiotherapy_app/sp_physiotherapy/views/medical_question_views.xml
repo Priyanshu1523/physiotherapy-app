@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!--                  MEDICAL QUESTION LIST VIEW                  -->
+    <!-- ============================================================ -->
+
+    <record id="view_medical_question_list" model="ir.ui.view">
+        <field name="name">medical.question.list</field>
+        <field name="model">medical.question</field>
+        <field name="arch" type="xml">
+            <list string="Medical Questions" editable="bottom">
+                <field name="question_text" required="True"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--                 MEDICAL QUESTION ACTION WINDOW               -->
+    <!-- ============================================================ -->
+
+    <record id="action_medical_question" model="ir.actions.act_window">
+        <field name="name">Medical Questions</field>
+        <field name="res_model">medical.question</field>
+        <field name="view_mode">list</field>
+    </record>
+
+</odoo>

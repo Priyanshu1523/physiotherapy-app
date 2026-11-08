@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../api';
 import { Receipt, Plus, Printer, CheckCircle, IndianRupee, CreditCard } from 'lucide-react';
+import PaymentModal from '../components/PaymentModal';
 
 export default function BillingView() {
   const [invoices, setInvoices] = useState([]);
@@ -172,76 +173,21 @@ export default function BillingView() {
         </table>
       </div>
 
-      {/* RECORD PAYMENT MODAL */}
-      {isPayModalOpen && selectedInvoice && (
-        <div className="modal-overlay">
-          <div style={{ backgroundColor: '#ffffff', borderRadius: '0.75rem', width: '100%', maxWidth: '480px', padding: '1.75rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-              <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#0f172a' }}>Record Payment</h3>
-              <button onClick={() => setIsPayModalOpen(false)} style={{ border: 'none', background: 'none', cursor: 'pointer', fontSize: '1.25rem' }}>✕</button>
-            </div>
-
-            <div style={{ backgroundColor: '#f8fafc', padding: '1rem', borderRadius: '0.5rem', marginBottom: '1rem', fontSize: '0.85rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
-                <span style={{ color: '#64748b' }}>Invoice:</span>
-                <strong>{selectedInvoice.invoice_no}</strong>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
-                <span style={{ color: '#64748b' }}>Patient:</span>
-                <strong>{selectedInvoice.patient_name}</strong>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ color: '#64748b' }}>Pending Due:</span>
-                <strong style={{ color: '#dc2626' }}>₹{selectedInvoice.total_amount - selectedInvoice.paid_amount}</strong>
-              </div>
-            </div>
-
-            <form onSubmit={handleRecordPayment} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div>
-                <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#475569', display: 'block', marginBottom: '0.25rem' }}>Payment Amount (₹) *</label>
-                <input
-                  type="number"
-                  step="any"
-                  required
-                  value={payAmount}
-                  onChange={(e) => setPayAmount(e.target.value)}
-                  style={{ width: '100%', padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #cbd5e1' }}
-                />
-              </div>
-
-              <div>
-                <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#475569', display: 'block', marginBottom: '0.25rem' }}>Payment Method</label>
-                <select
-                  value={paymentMethod}
-                  onChange={(e) => setPaymentMethod(e.target.value)}
-                  style={{ width: '100%', padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #cbd5e1' }}
-                >
-                  <option value="upi">UPI (GPay / PhonePe / Paytm)</option>
-                  <option value="cash">Cash Counter</option>
-                  <option value="card">Credit / Debit Card</option>
-                  <option value="online">Net Banking</option>
-                </select>
-              </div>
-
-              <div>
-                <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#475569', display: 'block', marginBottom: '0.25rem' }}>Transaction / UPI Reference No.</label>
-                <input
-                  type="text"
-                  placeholder="e.g. UPI-99882211"
-                  value={transactionRef}
-                  onChange={(e) => setTransactionRef(e.target.value)}
-                  style={{ width: '100%', padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #cbd5e1' }}
-                />
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1rem' }}>
-                <button type="button" className="btn btn-outline" onClick={() => setIsPayModalOpen(false)}>Cancel</button>
-                <button type="submit" className="btn btn-success">Confirm Payment</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      {/* ADVANCED MULTI-METHOD PAYMENT MODAL (UPI, CARDS, NETBANKING, CASH) */}
+      <PaymentModal
+        isOpen={isPayModalOpen}
+        onClose={() => {
+          setIsPayModalOpen(false);
+          setSelectedInvoice(null);
+        }}
+        amount={selectedInvoice ? selectedInvoice.total_amount - selectedInvoice.paid_amount : 0}
+        invoiceId={selectedInvoice?.id}
+        patientName={selectedInvoice?.patient_name}
+        description={`Payment for Invoice #${selectedInvoice?.invoice_no}`}
+        onPaymentSuccess={() => {
+          loadInvoices();
+        }}
+      />
 
       {/* PRINT INVOICE RECEIPT MODAL */}
       {isPrintModalOpen && activePrintInv && (

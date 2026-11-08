@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Medicine frequency data specifying how often medication is taken -->
+        <record model="medicine.frequency" id="medicine_frequency_bd">
+            <field name="code">BD</field>
+            <field name="name">Twice a day</field>
+        </record>
+        <record model="medicine.frequency" id="medicine_frequency_od">
+            <field name="code">OD</field>
+            <field name="name">Once a day</field>
+        </record>
+        <record model="medicine.frequency" id="medicine_frequency_tds">
+            <field name="code">TDS</field>
+            <field name="name">Three times a day</field>
+        </record>
+        <record model="medicine.frequency" id="medicine_frequency_qds">
+            <field name="code">QDS</field>
+            <field name="name">Four times a day</field>
+        </record>
+        <record model="medicine.frequency" id="medicine_frequency_hs">
+            <field name="code">HS</field>
+            <field name="name">At bedtime</field>
+        </record>
+        <record model="medicine.frequency" id="medicine_frequency_pc">
+            <field name="code">PC</field>
+            <field name="name">Before meals</field>
+        </record>
+    </data>
+</odoo>

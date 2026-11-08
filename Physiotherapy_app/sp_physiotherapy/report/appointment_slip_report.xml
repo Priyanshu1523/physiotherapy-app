@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Report Action -->
+    <record id="action_report_appointment_slip" model="ir.actions.report">
+        <field name="name">Appointment Confirmation Slip</field>
+        <field name="model">medical.appointment</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">sp_physiotherapy.report_appointment_slip_document</field>
+        <field name="report_file">sp_physiotherapy.report_appointment_slip_document</field>
+        <field name="print_report_name">
+            'Appointment Slip - %s' % (object.appointment_no)
+        </field>
+        <field name="binding_model_id" ref="model_medical_appointment"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Slip Template -->
+    <template id="report_appointment_slip_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page"
+                         style="font-family: 'Helvetica', 'Arial', sans-serif;
+                                font-size: 13px;
+                                color: #222;
+                                max-width: 620px;
+                                margin: auto;">
+
+                        <!-- HEADER -->
+                        <div style="text-align: center;
+                                    border-bottom: 3px solid #2c3e50;
+                                    padding-bottom: 12px;
+                                    margin-bottom: 16px;">
+                            <t t-if="doc.env.company.logo">
+                                <img t-att-src="image_data_uri(doc.env.company.logo)"
+                                     style="max-height: 55px; margin-bottom: 6px;"
+                                     alt="Clinic Logo"/>
+                                <br/>
+                            </t>
+                            <h2 style="margin: 0;
+                                       font-weight: 800;
+                                       letter-spacing: 2px;
+                                       color: #2c3e50;">
+                                APPOINTMENT CONFIRMATION SLIP
+                            </h2>
+                            <div style="font-size: 11px; color: #777; margin-top: 2px;">
+                                Professional Medical Care
+                            </div>
+                        </div>
+
+                        <!-- APPOINTMENT DETAILS TABLE -->
+                        <table style="width: 100%;
+                                      border-collapse: collapse;
+                                      margin-bottom: 18px;">
+                            <tr style="background: #f5f5f5;">
+                                <td style="padding: 9px; border: 1px solid #ccc; width: 40%;">
+                                    <strong>Appointment No</strong>
+                                </td>
+                                <td style="padding: 9px; border: 1px solid #ccc;">
+                                    <span t-field="doc.appointment_no"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 9px; border: 1px solid #ccc;">
+                                    <strong>Patient Name</strong>
+                                </td>
+                                <td style="padding: 9px; border: 1px solid #ccc;">
+                                    <span t-field="doc.patient_id.name"/>
+                                </td>
+                            </tr>
+                            <tr style="background: #f5f5f5;">
+                                <td style="padding: 9px; border: 1px solid #ccc;">
+                                    <strong>Patient ID</strong>
+                                </td>
+                                <td style="padding: 9px; border: 1px solid #ccc;">
+                                    <span t-field="doc.patient_code"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 9px; border: 1px solid #ccc;">
+                                    <strong>Doctor</strong>
+                                </td>
+                                <td style="padding: 9px; border: 1px solid #ccc;">
+                                    <span t-field="doc.doctor_id.name"/>
+                                    <t t-if="doc.doctor_id.specialization_id">
+                                        <br/>
+                                        <small style="color: #777;">
+                                            <span t-field="doc.doctor_id.specialization_id.name"/>
+                                        </small>
+                                    </t>
+                                </td>
+                            </tr>
+                            <tr style="background: #f5f5f5;">
+                                <td style="padding: 9px; border: 1px solid #ccc;">
+                                    <strong>Appointment Date</strong>
+                                </td>
+                                <td style="padding: 9px; border: 1px solid #ccc;">
+                                    <span t-field="doc.appointment_date"
+                                          t-options="{'widget': 'datetime'}"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 9px; border: 1px solid #ccc;">
+                                    <strong>Duration</strong>
+                                </td>
+                                <td style="padding: 9px; border: 1px solid #ccc;">
+                                    <span t-field="doc.slot_duration"/> Minutes
+                                </td>
+                            </tr>
+                            <tr style="background: #f5f5f5;">
+                                <td style="padding: 9px; border: 1px solid #ccc;">
+                                    <strong>Status</strong>
+                                </td>
+                                <td style="padding: 9px; border: 1px solid #ccc;">
+                                    <span t-esc="dict(doc._fields['state'].selection).get(doc.state)"/>
+                                </td>
+                            </tr>
+                            <t t-if="doc.consultation_fee">
+                                <tr>
+                                    <td style="padding: 9px; border: 1px solid #ccc;">
+                                        <strong>Consultation Fee</strong>
+                                    </td>
+                                    <td style="padding: 9px; border: 1px solid #ccc;">
+                                        <span t-field="doc.consultation_fee"
+                                              t-options="{'widget': 'monetary', 'display_currency': doc.env.company.currency_id}"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </table>
+
+                        <!-- QR CODE SECTION -->
+                        <t t-if="doc.booking_qr or doc.appointment_qr">
+                            <div style="margin-top: 10px; margin-bottom: 18px;">
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <tr>
+                                        <t t-if="doc.booking_qr">
+                                            <td style="width: 50%;
+                                                       text-align: center;
+                                                       padding: 14px;
+                                                       border: 1px solid #ddd;">
+                                                <strong style="font-size: 12px; color: #2c3e50;">
+                                                    Book New Appointment
+                                                </strong>
+                                                <br/>
+                                                <img t-att-src="image_data_uri(doc.booking_qr)"
+                                                     style="width: 120px; height: 120px; margin-top: 8px;"/>
+                                                <br/>
+                                                <small style="font-size: 9px; color: #888;">
+                                                    Scan to book a new appointment
+                                                </small>
+                                            </td>
+                                        </t>
+                                        <t t-if="doc.appointment_qr">
+                                            <td style="width: 50%;
+                                                       text-align: center;
+                                                       padding: 14px;
+                                                       border: 1px solid #ddd;">
+                                                <strong style="font-size: 12px; color: #2c3e50;">
+                                                    View This Appointment
+                                                </strong>
+                                                <br/>
+                                                <img t-att-src="image_data_uri(doc.appointment_qr)"
+                                                     style="width: 120px; height: 120px; margin-top: 8px;"/>
+                                                <br/>
+                                                <small style="font-size: 9px; color: #888;">
+                                                    Scan to view appointment details
+                                                </small>
+                                            </td>
+                                        </t>
+                                    </tr>
+                                </table>
+                            </div>
+                        </t>
+
+                        <!-- FOOTER NOTE -->
+                        <div style="border-top: 1px solid #2c3e50;
+                                    padding-top: 10px;
+                                    text-align: center;
+                                    font-size: 11px;
+                                    color: #666;">
+                            Please arrive 10 minutes before your scheduled appointment time.
+                            <br/>
+                            For cancellations, visit your appointment portal or scan the QR code above.
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

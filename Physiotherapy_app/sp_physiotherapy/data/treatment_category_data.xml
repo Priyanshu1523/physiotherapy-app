@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Data for treatment category -->
+        <record model="treatment.category" id="preventive_therapy">
+            <field name="name">Preventive Therapy</field>
+        </record>
+        <record model="treatment.category" id="restorative_therapy">
+            <field name="name">Restorative Therapy</field>
+        </record>
+        <record model="treatment.category" id="rehabilitative_therapy">
+            <field name="name">Rehabilitative Therapy</field>
+        </record>
+    </data>
+</odoo>

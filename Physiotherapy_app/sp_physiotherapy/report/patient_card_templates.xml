@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="report_patient_card_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page"
+                         style="font-family: 'Helvetica', 'Arial', sans-serif;
+                                font-size: 13px;
+                                color: #222;">
+
+                        <!-- CARD HEADER -->
+                        <div style="background: #2c3e50;
+                                    color: #fff;
+                                    padding: 16px 20px;
+                                    margin-bottom: 18px;
+                                    border-radius: 4px;">
+                            <table style="width: 100%;">
+                                <tr>
+                                    <td style="width: 80px; vertical-align: top;">
+                                        <t t-if="doc.image_128">
+                                            <img t-att-src="image_data_uri(doc.image_128)"
+                                                 style="width: 72px;
+                                                        height: 72px;
+                                                        border-radius: 50%;
+                                                        border: 2px solid #fff;
+                                                        object-fit: cover;"/>
+                                        </t>
+                                        <t t-else="">
+                                            <div style="width: 72px;
+                                                        height: 72px;
+                                                        border-radius: 50%;
+                                                        border: 2px solid #fff;
+                                                        background: #5d6d7e;
+                                                        text-align: center;
+                                                        line-height: 72px;
+                                                        font-size: 28px;
+                                                        font-weight: 700;
+                                                        color: #ecf0f1;">
+                                                <t t-esc="(doc.name or 'P')[0].upper()"/>
+                                            </div>
+                                        </t>
+                                    </td>
+                                    <td style="vertical-align: middle; padding-left: 16px;">
+                                        <h2 style="margin: 0;
+                                                   font-weight: 700;
+                                                   color: #fff;
+                                                   letter-spacing: 1px;">
+                                            PATIENT MEDICAL CARD
+                                        </h2>
+                                        <div style="font-size: 18px;
+                                                    font-weight: 600;
+                                                    margin-top: 4px;">
+                                            <span t-field="doc.name"/>
+                                        </div>
+                                        <t t-if="doc.patient_code">
+                                            <div style="font-size: 13px;
+                                                        color: #bdc3c7;
+                                                        margin-top: 2px;">
+                                                ID: <span t-field="doc.patient_code"/>
+                                            </div>
+                                        </t>
+                                    </td>
+                                    <td style="text-align: right;
+                                               vertical-align: top;
+                                               width: 120px;">
+                                        <t t-if="doc.company_id.logo">
+                                            <img t-att-src="image_data_uri(doc.company_id.logo)"
+                                                 style="max-height: 50px; max-width: 110px;"/>
+                                        </t>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <!-- PERSONAL INFORMATION -->
+                        <div style="margin-bottom: 18px;">
+                            <h4 style="color: #2c3e50;
+                                       border-bottom: 2px solid #2c3e50;
+                                       padding-bottom: 4px;
+                                       margin-bottom: 10px;">
+                                Personal Information
+                            </h4>
+                            <table style="width: 100%;
+                                          border-collapse: collapse;">
+                                <tr>
+                                    <td style="padding: 6px 10px;
+                                               border: 1px solid #ddd;
+                                               width: 25%;
+                                               background: #f5f5f5;">
+                                        <strong>Date of Birth</strong>
+                                    </td>
+                                    <td style="padding: 6px 10px;
+                                               border: 1px solid #ddd;
+                                               width: 25%;">
+                                        <t t-if="doc.date_of_birth">
+                                            <span t-field="doc.date_of_birth"/>
+                                        </t>
+                                        <t t-else="">-</t>
+                                    </td>
+                                    <td style="padding: 6px 10px;
+                                               border: 1px solid #ddd;
+                                               width: 25%;
+                                               background: #f5f5f5;">
+                                        <strong>Age</strong>
+                                    </td>
+                                    <td style="padding: 6px 10px;
+                                               border: 1px solid #ddd;
+                                               width: 25%;">
+                                        <t t-if="doc.age">
+                                            <span t-field="doc.age"/> years
+                                        </t>
+                                        <t t-else="">-</t>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 6px 10px;
+                                               border: 1px solid #ddd;
+                                               background: #f5f5f5;">
+                                        <strong>Gender</strong>
+                                    </td>
+                                    <td style="padding: 6px 10px;
+                                               border: 1px solid #ddd;">
+                                        <t t-if="doc.gender">
+                                            <span t-field="doc.gender"/>
+                                        </t>
+                                        <t t-else="">-</t>
+                                    </td>
+                                    <td style="padding: 6px 10px;
+                                               border: 1px solid #ddd;
+                                               background: #f5f5f5;">
+                                        <strong>Blood Group</strong>
+                                    </td>
+                                    <td style="padding: 6px 10px;
+                                               border: 1px solid #ddd;">
+                                        <t t-if="doc.blood_group">
+                                            <span t-field="doc.blood_group"/>
+                                        </t>
+                                        <t t-else="">-</t>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 6px 10px;
+                                               border: 1px solid #ddd;
+                                               background: #f5f5f5;">
+                                        <strong>Phone</strong>
+                                    </td>
+                                    <td style="padding: 6px 10px;
+                                               border: 1px solid #ddd;">
+                                        <t t-if="doc.phone">
+                                            <span t-field="doc.phone"/>
+                                        </t>
+                                        <t t-else="">-</t>
+                                    </td>
+                                    <td style="padding: 6px 10px;
+                                               border: 1px solid #ddd;
+                                               background: #f5f5f5;">
+                                        <strong>Email</strong>
+                                    </td>
+                                    <td style="padding: 6px 10px;
+                                               border: 1px solid #ddd;">
+                                        <t t-if="doc.email">
+                                            <span t-field="doc.email"/>
+                                        </t>
+                                        <t t-else="">-</t>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <!-- MEDICAL INFORMATION -->
+                        <div style="margin-bottom: 18px;">
+                            <h4 style="color: #2c3e50;
+                                       border-bottom: 2px solid #2c3e50;
+                                       padding-bottom: 4px;
+                                       margin-bottom: 10px;">
+                                Medical Information
+                            </h4>
+
+                            <!-- Medical History -->
+                            <div style="border: 1px solid #ddd;
+                                        border-radius: 4px;
+                                        padding: 10px 14px;
+                                        margin-bottom: 10px;">
+                                <strong style="color: #2c3e50;">Medical History</strong>
+                                <br/>
+                                <t t-if="doc.medical_history">
+                                    <span t-field="doc.medical_history"/>
+                                </t>
+                                <t t-else="">
+                                    <span style="color: #999;">No medical history recorded.</span>
+                                </t>
+                            </div>
+
+                            <div style="border: 1px solid #e74c3c;
+                                        border-radius: 4px;
+                                        padding: 10px 14px;
+                                        margin-bottom: 10px;
+                                        background: #fdf2f2;">
+                                <strong style="color: #c0392b;">Allergies</strong>
+                                <br/>
+                                <t t-if="doc.allergies">
+                                    <span t-field="doc.allergies" style="color: #c0392b;"/>
+                                </t>
+                                <t t-else="">
+                                    <span style="color: #999;">No known allergies.</span>
+                                </t>
+                            </div>
+                        </div>
+
+                        <!-- EMERGENCY CONTACT -->
+                        <div style="margin-bottom: 18px;">
+                            <h4 style="color: #2c3e50;
+                                       border-bottom: 2px solid #2c3e50;
+                                       padding-bottom: 4px;
+                                       margin-bottom: 10px;">
+                                Emergency Contact
+                            </h4>
+                            <table style="width: 100%;
+                                          border-collapse: collapse;">
+                                <tr>
+                                    <td style="padding: 6px 10px;
+                                               border: 1px solid #ddd;
+                                               width: 25%;
+                                               background: #f5f5f5;">
+                                        <strong>Contact Name</strong>
+                                    </td>
+                                    <td style="padding: 6px 10px;
+                                               border: 1px solid #ddd;
+                                               width: 25%;">
+                                        <t t-if="doc.emergency_contact_name">
+                                            <span t-field="doc.emergency_contact_name"/>
+                                        </t>
+                                        <t t-else="">-</t>
+                                    </td>
+                                    <td style="padding: 6px 10px;
+                                               border: 1px solid #ddd;
+                                               width: 25%;
+                                               background: #f5f5f5;">
+                                        <strong>Contact Phone</strong>
+                                    </td>
+                                    <td style="padding: 6px 10px;
+                                               border: 1px solid #ddd;
+                                               width: 25%;">
+                                        <t t-if="doc.emergency_contact_phone">
+                                            <span t-field="doc.emergency_contact_phone"/>
+                                        </t>
+                                        <t t-else="">-</t>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+
+                        <!-- RECENT APPOINTMENTS -->
+                        <div style="margin-bottom: 18px;">
+                            <h4 style="color: #2c3e50;
+                                       border-bottom: 2px solid #2c3e50;
+                                       padding-bottom: 4px;
+                                       margin-bottom: 10px;">
+                                Recent Appointments
+                            </h4>
+                            <t t-set="appointments"
+                               t-value="doc.env['medical.appointment'].sudo().search([('patient_id', '=', doc.id)], order='appointment_date desc', limit=10)"/>
+                            <t t-if="appointments">
+                                <table style="width: 100%;
+                                              border-collapse: collapse;">
+                                    <thead>
+                                        <tr style="background: #2c3e50; color: #fff;">
+                                            <th style="padding: 7px; border: 1px solid #2c3e50; text-align: left;">
+                                                Appointment No
+                                            </th>
+                                            <th style="padding: 7px; border: 1px solid #2c3e50; text-align: left;">
+                                                Date
+                                            </th>
+                                            <th style="padding: 7px; border: 1px solid #2c3e50; text-align: left;">
+                                                Doctor
+                                            </th>
+                                            <th style="padding: 7px; border: 1px solid #2c3e50; text-align: center;">
+                                                Status
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-set="row_idx" t-value="0"/>
+                                        <t t-foreach="appointments" t-as="appt">
+                                            <t t-set="row_idx" t-value="row_idx + 1"/>
+                                            <tr t-att-style="'background: #f9f9f9;' if row_idx % 2 == 0 else ''">
+                                                <td style="padding: 6px; border: 1px solid #ddd;">
+                                                    <span t-esc="appt.appointment_no"/>
+                                                </td>
+                                                <td style="padding: 6px; border: 1px solid #ddd;">
+                                                    <span t-field="appt.appointment_date"
+                                                          t-options="{'widget': 'datetime'}"/>
+                                                </td>
+                                                <td style="padding: 6px; border: 1px solid #ddd;">
+                                                    <span t-esc="appt.doctor_id.name"/>
+                                                </td>
+                                                <td style="padding: 6px; border: 1px solid #ddd; text-align: center;">
+                                                    <span t-esc="dict(appt._fields['state'].selection).get(appt.state)"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </t>
+                            <t t-else="">
+                                <div style="padding: 12px;
+                                            border: 1px solid #ddd;
+                                            border-radius: 4px;
+                                            text-align: center;
+                                            color: #999;">
+                                    No appointments recorded for this patient.
+                                </div>
+                            </t>
+                        </div>
+
+                        <div style="border-top: 2px solid #2c3e50;
+                                    padding-top: 10px;
+                                    margin-top: 10px;
+                                    text-align: center;
+                                    font-size: 11px;
+                                    color: #888;">
+                            This medical card is confidential and intended for clinical use only.
+                            <br/>
+                            Generated on <span t-esc="context_today().strftime('%d %B %Y')"/>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

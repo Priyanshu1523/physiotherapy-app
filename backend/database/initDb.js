@@ -2,9 +2,9 @@
  * PostgreSQL Database Initialization Script
  * Runs schema.sql and seed.sql to setup the database.
  */
-require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
+require('dotenv').config({ path: path.join(__dirname, '../.env') });
 const { Client } = require('pg');
 
 async function initDatabase() {

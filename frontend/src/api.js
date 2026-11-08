@@ -675,6 +675,93 @@ export const api = {
     return { success: true };
   },
 
+  // Payment Gateway & UPI Operations
+  getPaymentConfig: () =>
+    safeFetch(`${API_BASE}/payment/config`, {}, {
+      success: true,
+      data: {
+        merchant_name: 'PhysioCare Clinic & Rehabilitation Center',
+        upi_vpa: 'physiocare@icici',
+        currency: 'INR',
+        currency_symbol: '₹',
+        razorpay_key_id: 'rzp_test_sampleKey123',
+        methods: ['upi', 'card', 'netbanking', 'cash'],
+        is_test_mode: true,
+      },
+    }),
+
+  createPaymentOrder: async (data) => {
+    const res = await safeFetch(`${API_BASE}/payment/create-order`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    }, null);
+
+    if (res && res.success) return res;
+
+    const orderId = `ORD-2026-${Date.now().toString().slice(-6)}`;
+    const upiString = `upi://pay?pa=physiocare@icici&pn=PhysioCare%20Clinic&am=${parseFloat(data.amount).toFixed(2)}&tr=${orderId}&cu=INR&tn=PhysioCare%20Order`;
+
+    return {
+      success: true,
+      data: {
+        order_id: orderId,
+        amount: parseFloat(data.amount),
+        currency: 'INR',
+        upi_vpa: 'physiocare@icici',
+        upi_string: upiString,
+        qr_code: null,
+        created_at: new Date().toISOString(),
+      },
+    };
+  },
+
+  verifyPayment: async (data) => {
+    const res = await safeFetch(`${API_BASE}/payment/verify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    }, null);
+
+    if (res && res.success) return res;
+
+    if (data.invoice_id) {
+      const inv = fallbackStore.invoices.find((i) => i.id === parseInt(data.invoice_id));
+      if (inv) {
+        inv.paid_amount = (inv.paid_amount || 0) + parseFloat(data.amount);
+        inv.status = inv.paid_amount >= inv.total_amount ? 'paid' : 'partially_paid';
+        inv.payments = inv.payments || [];
+        inv.payments.push({
+          payment_no: `PAY-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+          amount: parseFloat(data.amount),
+          payment_method: data.payment_method || 'upi',
+          transaction_ref: data.transaction_ref || `TXN-${Date.now().toString().slice(-6)}`,
+          date: new Date().toISOString(),
+        });
+      }
+    }
+
+    if (data.appointment_id) {
+      const appt = fallbackStore.appointments.find((a) => a.id === parseInt(data.appointment_id));
+      if (appt) {
+        appt.status = 'confirmed';
+        appt.payment_status = 'paid';
+      }
+    }
+
+    return {
+      success: true,
+      message: 'Payment verified successfully (local store)',
+      data: {
+        receipt_no: `PAY-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+        transaction_id: data.transaction_ref || `TXN-${Date.now().toString().slice(-6)}`,
+        amount: parseFloat(data.amount),
+        currency: 'INR',
+        status: 'paid',
+      },
+    };
+  },
+
   // Equipments
   getEquipments: () =>
     safeFetch(`${API_BASE}/equipments`, {}, {
@@ -719,3 +806,5 @@ export const api = {
   getShifts: () =>
     safeFetch(`${API_BASE}/shifts`, {}, { success: true, data: fallbackStore.shifts }),
 };
+
+export default api;

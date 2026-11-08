@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo noupdate="1">
+    <record id="seq_patient_code" model="ir.sequence">
+        <field name="name">Patient Code</field>
+        <field name="code">medical.patient</field>
+        <field name="prefix">PT</field>
+        <field name="padding">5</field>
+    </record>
+
+    <record id="seq_appointment_no" model="ir.sequence">
+        <field name="name">Appointment Number</field>
+        <field name="code">medical.appointment</field>
+        <field name="prefix">APT/</field>
+        <field name="padding">5</field>
+    </record>
+
+    <record id="seq_prescription_no" model="ir.sequence">
+        <field name="name">Prescription Number</field>
+        <field name="code">medical.prescriptions</field>
+        <field name="prefix">RX/</field>
+        <field name="padding">5</field>
+    </record>
+</odoo>

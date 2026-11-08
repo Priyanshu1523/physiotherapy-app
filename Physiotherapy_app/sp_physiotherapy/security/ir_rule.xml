@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Appointments -->
+    <record id="rule_appointment_admin" model="ir.rule">
+        <field name="name">Appointments: Admin sees all</field>
+        <field name="model_id" ref="model_medical_appointment"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_physiotherapy_admin'))]"/>
+    </record>
+
+    <record id="rule_appointment_doctor" model="ir.rule">
+        <field name="name">Appointments: Doctor sees own</field>
+        <field name="model_id" ref="model_medical_appointment"/>
+        <field name="domain_force">[('doctor_id.user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_physiotherapy_doctor'))]"/>
+    </record>
+
+    <record id="rule_appointment_portal" model="ir.rule">
+        <field name="name">Appointments: Portal sees own</field>
+        <field name="model_id" ref="model_medical_appointment"/>
+        <field name="domain_force">[('patient_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+    </record>
+
+    <!-- Prescriptions -->
+    <record id="rule_prescription_admin" model="ir.rule">
+        <field name="name">Prescriptions: Admin sees all</field>
+        <field name="model_id" ref="model_medical_prescription"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_physiotherapy_admin'))]"/>
+    </record>
+
+    <record id="rule_prescription_doctor" model="ir.rule">
+        <field name="name">Prescriptions: Doctor sees own</field>
+        <field name="model_id" ref="model_medical_prescription"/>
+        <field name="domain_force">[('prescribed_doctor_id.user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_physiotherapy_doctor'))]"/>
+    </record>
+
+    <record id="rule_prescription_portal" model="ir.rule">
+        <field name="name">Prescriptions: Portal sees own</field>
+        <field name="model_id" ref="model_medical_prescription"/>
+        <field name="domain_force">[('patient_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+    </record>
+
+    <!-- Patient records: portal users see only their own partner -->
+    <record id="rule_partner_portal_patient" model="ir.rule">
+        <field name="name">Partners: Portal sees own record</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="domain_force">[('id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        <field name="perm_write">0</field>
+        <field name="perm_create">0</field>
+        <field name="perm_unlink">0</field>
+    </record>
+</odoo>

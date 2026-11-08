@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Extend the portal home page to add Appointments entry -->
+    <template id="portal_my_home_physiotherapy"
+              name="Show Appointments on Portal Home"
+              inherit_id="portal.portal_my_home"
+              priority="40">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="icon" t-value="'/sp_physiotherapy/static/src/img/appointment.svg'"/>
+                <t t-set="title">Appointments</t>
+                <t t-set="text">View and manage your physiotherapy appointments</t>
+                <t t-set="url" t-value="'/my/appointments'"/>
+                <t t-set="placeholder_count" t-value="'appointment_count'"/>
+            </t>
+        </xpath>
+    </template>
+
+</odoo>

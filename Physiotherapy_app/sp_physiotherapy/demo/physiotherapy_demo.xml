@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Patient sources and intake questions -->
+        <record id="demo_source_1" model="medical.source"><field name="name">Walk-in</field></record>
+        <record id="demo_source_2" model="medical.source"><field name="name">Doctor Referral</field></record>
+        <record id="demo_source_3" model="medical.source"><field name="name">Website</field></record>
+        <record id="demo_source_4" model="medical.source"><field name="name">Social Media</field></record>
+        <record id="demo_question_1" model="medical.question"><field name="question_text">Do you have any past surgery?</field></record>
+        <record id="demo_question_2" model="medical.question"><field name="question_text">Are you currently on any medication?</field></record>
+        <record id="demo_question_3" model="medical.question"><field name="question_text">Where do you feel the pain?</field></record>
+        <record id="demo_question_4" model="medical.question"><field name="question_text">How long have you had this problem?</field></record>
+
+        <!-- Doctors -->
+        <record id="demo_doctor_1" model="hr.employee" context="{'tracking_disable': True}">
+            <field name="name">Dr. Arvind Nair</field>
+            <field name="is_doctor" eval="True"/>
+            <field name="physio_employee_type">doctor</field>
+            <field name="specialization_id" ref="physiotherapist_specialist"/>
+            <field name="registration_no">PHYS-78901</field>
+            <field name="date_of_birth">1978-11-10</field>
+            <field name="work_email">arvind.nair@clinic.com</field>
+            <field name="mobile_phone">+91 91234 56789</field>
+            <field name="time_shift_ids" eval="[(6, 0, [ref('shift_morning'),ref('shift_evening')])]"/>
+        </record>
+        <record id="demo_doctor_2" model="hr.employee" context="{'tracking_disable': True}">
+            <field name="name">Dr. Meena Joshi</field>
+            <field name="is_doctor" eval="True"/>
+            <field name="physio_employee_type">doctor</field>
+            <field name="specialization_id" ref="orthopedic_specialist"/>
+            <field name="registration_no">ORTHO-45210</field>
+            <field name="date_of_birth">1982-05-30</field>
+            <field name="work_email">meena.joshi@clinic.com</field>
+            <field name="mobile_phone">+91 91234 56780</field>
+            <field name="time_shift_ids" eval="[(6, 0, [ref('shift_day'),ref('shift_evening')])]"/>
+        </record>
+
+        <!-- Patients -->
+        <record id="demo_patient_1" model="res.partner" context="{'tracking_disable': True}">
+            <field name="name">Rahul Mehta</field>
+            <field name="is_patient" eval="True"/>
+            <field name="date_of_birth">1990-03-15</field>
+            <field name="gender">male</field>
+            <field name="blood_group">o+</field>
+            <field name="email">rahul.mehta@example.com</field>
+            <field name="phone">+91 90000 00001</field>
+            <field name="medical_history">Lower back pain since 2023, no surgery</field>
+            <field name="allergies">None</field>
+            <field name="emergency_contact_name">Priya Mehta</field>
+            <field name="emergency_contact_phone">+91 98765 43210</field>
+            <field name="source_id" ref="demo_source_1"/>
+        </record>
+        <record id="demo_patient_2" model="res.partner" context="{'tracking_disable': True}">
+            <field name="name">Anjali Desai</field>
+            <field name="is_patient" eval="True"/>
+            <field name="date_of_birth">1985-08-22</field>
+            <field name="gender">female</field>
+            <field name="blood_group">b+</field>
+            <field name="email">anjali.desai@example.com</field>
+            <field name="phone">+91 90000 00002</field>
+            <field name="medical_history">Sports injury - left knee ACL strain</field>
+            <field name="allergies">Penicillin</field>
+            <field name="emergency_contact_name">Vikram Desai</field>
+            <field name="emergency_contact_phone">+91 98765 12345</field>
+            <field name="source_id" ref="demo_source_2"/>
+        </record>
+        <record id="demo_patient_3" model="res.partner" context="{'tracking_disable': True}">
+            <field name="name">Kiran Patel</field>
+            <field name="is_patient" eval="True"/>
+            <field name="date_of_birth">1978-11-02</field>
+            <field name="gender">male</field>
+            <field name="blood_group">a+</field>
+            <field name="email">kiran.patel@example.com</field>
+            <field name="phone">+91 90000 00003</field>
+            <field name="medical_history">Cervical spondylosis, desk job</field>
+            <field name="allergies">None</field>
+            <field name="emergency_contact_name">Meera Patel</field>
+            <field name="emergency_contact_phone">+91 98765 22334</field>
+            <field name="source_id" ref="demo_source_3"/>
+        </record>
+        <record id="demo_patient_4" model="res.partner" context="{'tracking_disable': True}">
+            <field name="name">Sneha Shah</field>
+            <field name="is_patient" eval="True"/>
+            <field name="date_of_birth">1995-06-18</field>
+            <field name="gender">female</field>
+            <field name="blood_group">ab+</field>
+            <field name="email">sneha.shah@example.com</field>
+            <field name="phone">+91 90000 00004</field>
+            <field name="medical_history">Frozen shoulder (right)</field>
+            <field name="allergies">None</field>
+            <field name="emergency_contact_name">Jay Shah</field>
+            <field name="emergency_contact_phone">+91 98765 33445</field>
+            <field name="source_id" ref="demo_source_4"/>
+        </record>
+        <record id="demo_patient_5" model="res.partner" context="{'tracking_disable': True}">
+            <field name="name">Amit Joshi</field>
+            <field name="is_patient" eval="True"/>
+            <field name="date_of_birth">1969-01-27</field>
+            <field name="gender">male</field>
+            <field name="blood_group">o-</field>
+            <field name="email">amit.joshi@example.com</field>
+            <field name="phone">+91 90000 00005</field>
+            <field name="medical_history">Post knee replacement rehab</field>
+            <field name="allergies">Dust</field>
+            <field name="emergency_contact_name">Nisha Joshi</field>
+            <field name="emergency_contact_phone">+91 98765 44556</field>
+            <field name="source_id" ref="demo_source_1"/>
+        </record>
+
+        <!-- Treatment prices -->
+        <record id="treatment_manual_therapy" model="medical.treatment"><field name="cost">500</field></record>
+        <record id="treatment_electrotherapy" model="medical.treatment"><field name="cost">800</field></record>
+        <record id="treatment_therapeutic_exercise" model="medical.treatment"><field name="cost">300</field></record>
+        <record id="treatment_postural_assessment" model="medical.treatment"><field name="cost">400</field></record>
+        <record id="treatment_routine_checkup" model="medical.treatment"><field name="cost">250</field></record>
+
+        <!-- Medicines -->
+        <record id="demo_medicine_1" model="product.template">
+            <field name="name">Ibuprofen 400mg</field>
+            <field name="is_medicine" eval="True"/>
+            <field name="generic_name">Ibuprofen</field>
+            <field name="dosage_strength">400</field>
+            <field name="list_price">12</field>
+        </record>
+        <record id="demo_medicine_2" model="product.template">
+            <field name="name">Diclofenac Gel</field>
+            <field name="is_medicine" eval="True"/>
+            <field name="generic_name">Diclofenac Sodium</field>
+            <field name="dosage_strength">500</field>
+            <field name="list_price">85</field>
+        </record>
+        <record id="demo_medicine_3" model="product.template">
+            <field name="name">Paracetamol 650mg</field>
+            <field name="is_medicine" eval="True"/>
+            <field name="generic_name">Paracetamol</field>
+            <field name="dosage_strength">650</field>
+            <field name="list_price">8</field>
+        </record>
+        <record id="demo_medicine_4" model="product.template">
+            <field name="name">Calcium + Vit D3</field>
+            <field name="is_medicine" eval="True"/>
+            <field name="generic_name">Calcium Carbonate</field>
+            <field name="dosage_strength">500</field>
+            <field name="list_price">15</field>
+        </record>
+
+        <!-- Equipment -->
+        <record id="demo_equipment_product_1" model="product.product">
+            <field name="name">Ultrasound Therapy Unit</field>
+            <field name="type">consu</field>
+        </record>
+        <record id="demo_equipment_product_2" model="product.product">
+            <field name="name">TENS Machine</field>
+            <field name="type">consu</field>
+        </record>
+        <record id="demo_equipment_product_3" model="product.product">
+            <field name="name">Treadmill</field>
+            <field name="type">consu</field>
+        </record>
+        <record id="demo_equipment_1" model="medical.equipment">
+            <field name="name">Ultrasound Therapy Unit</field>
+            <field name="product_id" ref="demo_equipment_product_1"/>
+            <field name="serial_number">UST-1001</field>
+            <field name="department">Electrotherapy</field>
+            <field name="state">active</field>
+        </record>
+        <record id="demo_equipment_2" model="medical.equipment">
+            <field name="name">TENS Machine</field>
+            <field name="product_id" ref="demo_equipment_product_2"/>
+            <field name="serial_number">TENS-2002</field>
+            <field name="department">Electrotherapy</field>
+            <field name="state">active</field>
+        </record>
+        <record id="demo_equipment_3" model="medical.equipment">
+            <field name="name">Treadmill</field>
+            <field name="product_id" ref="demo_equipment_product_3"/>
+            <field name="serial_number">TRD-3003</field>
+            <field name="department">Rehabilitation</field>
+            <field name="state">active</field>
+        </record>
+
+        <!-- Appointments (UTC times; shown in the user timezone, IST assumed) -->
+        <record id="demo_appointment_1" model="medical.appointment" context="{'physio_skip_validation': True, 'tracking_disable': True, 'mail_notrack': True}">
+            <field name="patient_id" ref="demo_patient_1"/>
+            <field name="doctor_id" ref="demo_doctor_1"/>
+            <field name="shift_id" ref="shift_morning"/>
+            <field name="appointment_date"
+                   eval="(DateTime.now() + timedelta(days=-7)).replace(hour=1, minute=30, second=0, microsecond=0)"/>
+            <field name="slot_duration">30</field>
+            <field name="consultation_fee">150</field>
+            <field name="state">done</field>
+            <field name="notes">Demo appointment</field>
+        </record>
+        <record id="demo_appointment_2" model="medical.appointment" context="{'physio_skip_validation': True, 'tracking_disable': True, 'mail_notrack': True}">
+            <field name="patient_id" ref="demo_patient_2"/>
+            <field name="doctor_id" ref="demo_doctor_2"/>
+            <field name="shift_id" ref="shift_day"/>
+            <field name="appointment_date"
+                   eval="(DateTime.now() + timedelta(days=-5)).replace(hour=5, minute=0, second=0, microsecond=0)"/>
+            <field name="slot_duration">30</field>
+            <field name="consultation_fee">200</field>
+            <field name="state">done</field>
+            <field name="notes">Demo appointment</field>
+        </record>
+        <record id="demo_appointment_3" model="medical.appointment" context="{'physio_skip_validation': True, 'tracking_disable': True, 'mail_notrack': True}">
+            <field name="patient_id" ref="demo_patient_3"/>
+            <field name="doctor_id" ref="demo_doctor_1"/>
+            <field name="shift_id" ref="shift_evening"/>
+            <field name="appointment_date"
+                   eval="(DateTime.now() + timedelta(days=-2)).replace(hour=12, minute=0, second=0, microsecond=0)"/>
+            <field name="slot_duration">30</field>
+            <field name="consultation_fee">150</field>
+            <field name="state">done</field>
+            <field name="notes">Demo appointment</field>
+        </record>
+        <record id="demo_appointment_4" model="medical.appointment" context="{'physio_skip_validation': True, 'tracking_disable': True, 'mail_notrack': True}">
+            <field name="patient_id" ref="demo_patient_4"/>
+            <field name="doctor_id" ref="demo_doctor_2"/>
+            <field name="shift_id" ref="shift_evening"/>
+            <field name="appointment_date"
+                   eval="(DateTime.now() + timedelta(days=0)).replace(hour=12, minute=30, second=0, microsecond=0)"/>
+            <field name="slot_duration">30</field>
+            <field name="consultation_fee">200</field>
+            <field name="state">in_progress</field>
+            <field name="notes">Demo appointment</field>
+        </record>
+        <record id="demo_appointment_5" model="medical.appointment" context="{'physio_skip_validation': True, 'tracking_disable': True, 'mail_notrack': True}">
+            <field name="patient_id" ref="demo_patient_5"/>
+            <field name="doctor_id" ref="demo_doctor_1"/>
+            <field name="shift_id" ref="shift_morning"/>
+            <field name="appointment_date"
+                   eval="(DateTime.now() + timedelta(days=1)).replace(hour=2, minute=0, second=0, microsecond=0)"/>
+            <field name="slot_duration">30</field>
+            <field name="consultation_fee">150</field>
+            <field name="state">confirmed</field>
+            <field name="notes">Demo appointment</field>
+        </record>
+        <record id="demo_appointment_6" model="medical.appointment" context="{'physio_skip_validation': True, 'tracking_disable': True, 'mail_notrack': True}">
+            <field name="patient_id" ref="demo_patient_1"/>
+            <field name="doctor_id" ref="demo_doctor_2"/>
+            <field name="shift_id" ref="shift_day"/>
+            <field name="appointment_date"
+                   eval="(DateTime.now() + timedelta(days=2)).replace(hour=5, minute=30, second=0, microsecond=0)"/>
+            <field name="slot_duration">30</field>
+            <field name="consultation_fee">200</field>
+            <field name="state">confirmed</field>
+            <field name="notes">Demo appointment</field>
+        </record>
+        <record id="demo_appointment_7" model="medical.appointment" context="{'physio_skip_validation': True, 'tracking_disable': True, 'mail_notrack': True}">
+            <field name="patient_id" ref="demo_patient_2"/>
+            <field name="doctor_id" ref="demo_doctor_1"/>
+            <field name="shift_id" ref="shift_evening"/>
+            <field name="appointment_date"
+                   eval="(DateTime.now() + timedelta(days=3)).replace(hour=12, minute=0, second=0, microsecond=0)"/>
+            <field name="slot_duration">30</field>
+            <field name="consultation_fee">150</field>
+            <field name="state">draft</field>
+            <field name="notes">Demo appointment</field>
+        </record>
+        <record id="demo_appointment_8" model="medical.appointment" context="{'physio_skip_validation': True, 'tracking_disable': True, 'mail_notrack': True}">
+            <field name="patient_id" ref="demo_patient_3"/>
+            <field name="doctor_id" ref="demo_doctor_2"/>
+            <field name="shift_id" ref="shift_day"/>
+            <field name="appointment_date"
+                   eval="(DateTime.now() + timedelta(days=4)).replace(hour=6, minute=0, second=0, microsecond=0)"/>
+            <field name="slot_duration">30</field>
+            <field name="consultation_fee">200</field>
+            <field name="state">cancelled</field>
+            <field name="notes">Demo appointment</field>
+        </record>
+
+        <!-- Prescriptions for completed appointments -->
+        <record id="demo_prescription_1" model="medical.prescription" context="{'physio_skip_validation': True, 'tracking_disable': True, 'mail_notrack': True}">
+            <field name="appointment_id" ref="demo_appointment_1"/>
+            <field name="patient_id" ref="demo_patient_1"/>
+            <field name="prescribed_doctor_id" ref="demo_doctor_1"/>
+            <field name="treatment_id" ref="treatment_manual_therapy"/>
+            <field name="treatment_cost">500</field>
+            <field name="prescription_date" eval="(DateTime.now() - timedelta(days=7)).date()"/>
+            <field name="notes">Demo prescription</field>
+            <field name="state">prescribed</field>
+        </record>
+        <record id="demo_prescription_2" model="medical.prescription" context="{'physio_skip_validation': True, 'tracking_disable': True, 'mail_notrack': True}">
+            <field name="appointment_id" ref="demo_appointment_2"/>
+            <field name="patient_id" ref="demo_patient_2"/>
+            <field name="prescribed_doctor_id" ref="demo_doctor_2"/>
+            <field name="treatment_id" ref="treatment_electrotherapy"/>
+            <field name="treatment_cost">800</field>
+            <field name="prescription_date" eval="(DateTime.now() - timedelta(days=5)).date()"/>
+            <field name="notes">Demo prescription</field>
+            <field name="state">new</field>
+        </record>
+        <record id="demo_prescription_3" model="medical.prescription" context="{'physio_skip_validation': True, 'tracking_disable': True, 'mail_notrack': True}">
+            <field name="appointment_id" ref="demo_appointment_3"/>
+            <field name="patient_id" ref="demo_patient_3"/>
+            <field name="prescribed_doctor_id" ref="demo_doctor_1"/>
+            <field name="treatment_id" ref="treatment_therapeutic_exercise"/>
+            <field name="treatment_cost">300</field>
+            <field name="prescription_date" eval="(DateTime.now() - timedelta(days=2)).date()"/>
+            <field name="notes">Demo prescription</field>
+            <field name="state">prescribed</field>
+        </record>
+
+        <!-- X-ray reports -->
+        <record id="demo_xray_1" model="xray.report" context="{'tracking_disable': True}">
+            <field name="patient_id" ref="demo_patient_1"/>
+            <field name="report_date" eval="(DateTime.now() + timedelta(days=-7)).date()"/>
+            <field name="description">X-ray lumbar spine AP/lateral: mild disc space narrowing at L4-L5. No fracture.</field>
+            <field name="scan_image" type="base64" file="sp_physiotherapy/demo/xray_1.png"/>
+            <field name="image_filename">xray_1.png</field>
+        </record>
+        <record id="demo_xray_2" model="xray.report" context="{'tracking_disable': True}">
+            <field name="patient_id" ref="demo_patient_2"/>
+            <field name="report_date" eval="(DateTime.now() + timedelta(days=-5)).date()"/>
+            <field name="description">X-ray left knee: no bony injury. Mild joint effusion, soft tissue strain suspected.</field>
+            <field name="scan_image" type="base64" file="sp_physiotherapy/demo/xray_2.png"/>
+            <field name="image_filename">xray_2.png</field>
+        </record>
+        <record id="demo_xray_3" model="xray.report" context="{'tracking_disable': True}">
+            <field name="patient_id" ref="demo_patient_3"/>
+            <field name="report_date" eval="(DateTime.now() + timedelta(days=-2)).date()"/>
+            <field name="description">X-ray cervical spine: straightening of normal lordosis, early degenerative changes.</field>
+            <field name="scan_image" type="base64" file="sp_physiotherapy/demo/xray_3.png"/>
+            <field name="image_filename">xray_3.png</field>
+        </record>
+
+        <!-- Prescription lines -->
+        <record id="demo_presc_line_1" model="medical.prescription.line">
+            <field name="prescription_id" ref="demo_prescription_1"/>
+            <field name="medicament_id" ref="demo_medicine_1"/>
+            <field name="form">tablet</field>
+            <field name="quantity">10</field>
+            <field name="morning" eval="True"/>
+            <field name="afternoon" eval="False"/>
+            <field name="evening" eval="True"/>
+            <field name="night" eval="False"/>
+            <field name="before_food" eval="False"/>
+            <field name="duration_days">5</field>
+        </record>
+        <record id="demo_presc_line_2" model="medical.prescription.line">
+            <field name="prescription_id" ref="demo_prescription_1"/>
+            <field name="medicament_id" ref="demo_medicine_2"/>
+            <field name="form">ointment</field>
+            <field name="quantity">1</field>
+            <field name="morning" eval="True"/>
+            <field name="afternoon" eval="True"/>
+            <field name="evening" eval="True"/>
+            <field name="night" eval="False"/>
+            <field name="before_food" eval="False"/>
+            <field name="duration_days">7</field>
+        </record>
+        <record id="demo_presc_line_3" model="medical.prescription.line">
+            <field name="prescription_id" ref="demo_prescription_2"/>
+            <field name="medicament_id" ref="demo_medicine_3"/>
+            <field name="form">tablet</field>
+            <field name="quantity">6</field>
+            <field name="morning" eval="True"/>
+            <field name="afternoon" eval="False"/>
+            <field name="evening" eval="False"/>
+            <field name="night" eval="True"/>
+            <field name="before_food" eval="False"/>
+            <field name="duration_days">3</field>
+        </record>
+        <record id="demo_presc_line_4" model="medical.prescription.line">
+            <field name="prescription_id" ref="demo_prescription_3"/>
+            <field name="medicament_id" ref="demo_medicine_4"/>
+            <field name="form">tablet</field>
+            <field name="quantity">15</field>
+            <field name="morning" eval="True"/>
+            <field name="afternoon" eval="False"/>
+            <field name="evening" eval="False"/>
+            <field name="night" eval="False"/>
+            <field name="before_food" eval="False"/>
+            <field name="duration_days">15</field>
+        </record>
+        <record id="demo_presc_line_5" model="medical.prescription.line">
+            <field name="prescription_id" ref="demo_prescription_3"/>
+            <field name="medicament_id" ref="demo_medicine_1"/>
+            <field name="form">tablet</field>
+            <field name="quantity">6</field>
+            <field name="morning" eval="True"/>
+            <field name="afternoon" eval="False"/>
+            <field name="evening" eval="True"/>
+            <field name="night" eval="False"/>
+            <field name="before_food" eval="False"/>
+            <field name="duration_days">3</field>
+        </record>
+    </data>
+</odoo>

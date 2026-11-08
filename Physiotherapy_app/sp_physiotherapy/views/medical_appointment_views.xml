@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================ -->
+    <!--                   APPOINTMENT SEARCH VIEW                    -->
+    <!-- ============================================================ -->
+
+    <record id="view_medical_appointment_search" model="ir.ui.view">
+        <field name="name">medical.appointment.search</field>
+        <field name="model">medical.appointment</field>
+        <field name="arch" type="xml">
+            <search string="Search Appointments">
+
+                <field name="appointment_no"/>
+                <field name="patient_id"
+                       invisible="context.get('portal_view')"
+                       readonly="context.get('portal_view')"/>
+                <field name="patient_code"/>
+                <field name="doctor_id"/>
+                <field name="urgency"/>
+
+                <filter name="filter_today"
+                        string="Today"
+                        domain="[('appointment_date', '&gt;=', datetime.datetime.combine(context_today(), datetime.time(0, 0, 0)).to_utc().strftime('%Y-%m-%d %H:%M:%S')),
+                                 ('appointment_date', '&lt;=', datetime.datetime.combine(context_today(), datetime.time(23, 59, 59)).to_utc().strftime('%Y-%m-%d %H:%M:%S'))]"/>
+                <filter name="filter_this_week"
+                        string="This Week"
+                        domain="[('appointment_date', '&gt;=', datetime.datetime.combine(context_today() + relativedelta(weekday=0, days=-6), datetime.time(0, 0, 0)).to_utc().strftime('%Y-%m-%d %H:%M:%S')),
+                                 ('appointment_date', '&lt;=', datetime.datetime.combine(context_today() + relativedelta(weekday=6), datetime.time(23, 59, 59)).to_utc().strftime('%Y-%m-%d %H:%M:%S'))]"/>
+                <separator/>
+                <filter name="filter_draft"
+                        string="Draft"
+                        domain="[('state', '=', 'draft')]"/>
+                <filter name="filter_confirmed"
+                        string="Confirmed"
+                        domain="[('state', '=', 'confirmed')]"/>
+                <filter name="filter_in_progress"
+                        string="In Progress"
+                        domain="[('state', '=', 'in_progress')]"/>
+                <filter name="filter_done"
+                        string="Done"
+                        domain="[('state', '=', 'done')]"/>
+                <filter name="filter_cancelled"
+                        string="Cancelled"
+                        domain="[('state', '=', 'cancelled')]"/>
+
+                <separator/>
+
+                <group>
+                    <filter name="group_by_doctor"
+                            string="Doctor"
+                            domain="[]" context="{'group_by': 'doctor_id'}"/>
+                    <filter name="group_by_patient"
+                            string="Patient"
+                            domain="[]" context="{'group_by': 'patient_id'}"/>
+                    <filter name="group_by_state"
+                            string="Status"
+                            domain="[]" context="{'group_by': 'state'}"/>
+                    <filter name="group_by_date"
+                            string="Appointment Date"
+                            domain="[]" context="{'group_by': 'appointment_date:day'}"/>
+                </group>
+
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--                    APPOINTMENT FORM VIEW                     -->
+    <!-- ============================================================ -->
+
+    <record id="view_medical_appointment_form" model="ir.ui.view">
+        <field name="name">medical.appointment.form</field>
+        <field name="model">medical.appointment</field>
+        <field name="arch" type="xml">
+            <form string="Medical Appointment">
+
+                <header>
+
+                    <button name="action_confirm"
+                            type="object"
+                            string="Confirm"
+                            class="btn-primary"
+                            invisible="state != 'draft'"/>
+
+                    <button name="action_start"
+                            type="object"
+                            string="Start Treatment"
+                            class="oe_highlight"
+                            invisible="state != 'confirmed'"/>
+
+                    <button name="action_done"
+                            type="object"
+                            string="Mark Done"
+                            class="oe_highlight"
+                            invisible="state != 'in_progress'"/>
+
+                    <button name="action_draft"
+                            type="object"
+                            string="Reset to Draft"
+                            invisible="state not in ('done', 'cancelled')"/>
+
+                    <button name="action_cancel"
+                            type="object"
+                            string="Cancel"
+                            confirm="Are you sure you want to cancel this appointment?"
+                            invisible="state in ('cancelled', 'done')"/>
+
+                    <button name="action_create_invoice"
+                            type="object"
+                            string="Create Invoice"
+                            class="btn-primary"
+                            invisible="state != 'done'"/>
+
+                    <field name="state"
+                           widget="statusbar"
+                           statusbar_visible="draft,confirmed,in_progress,done"/>
+
+                </header>
+
+                <sheet>
+
+                    <div class="oe_button_box" name="button_box">
+                        <button type="object"
+                                name="action_view_invoice"
+                                class="oe_stat_button"
+                                icon="fa-file-text-o"
+                                invisible="invoice_count == 0">
+                            <field name="invoice_count"
+                                   widget="statinfo"
+                                   string="Invoices"/>
+                        </button>
+                    </div>
+
+                    <div class="oe_title">
+                        <h1>
+                            <field name="appointment_no" readonly="1"
+                                   placeholder="New"/>
+                        </h1>
+                    </div>
+
+                    <group string="Patient Information">
+                        <group>
+                            <field name="patient_id"
+                                   readonly="state in ('done', 'cancelled')"
+                                   invisible="context.get('portal_view')"
+                                   options="{'no_create': False, 'no_quick_create': False}"/>
+                            <field name="patient_code" readonly="1"/>
+                            <field name="gender"
+                                   readonly="state in ('done', 'cancelled')"/>
+                            <field name="age"
+                                   readonly="state in ('done', 'cancelled')"/>
+                        </group>
+                        <group>
+                            <field name="phone" readonly="1"/>
+                            <field name="email" readonly="1"/>
+                            <field name="responsible_user"
+                                   readonly="state in ('done', 'cancelled')"/>
+                        </group>
+                    </group>
+
+                    <group string="Appointment Details">
+                        <group>
+                            <field name="doctor_id"
+                                   readonly="state in ('done', 'cancelled')"
+                                   options="{'no_create': True, 'no_create_edit': True}"/>
+                            <field name="available_shift_ids" invisible="1"/>
+                            <field name="shift_id"
+                                   readonly="state in ('done', 'cancelled')"/>
+                            <field name="urgency"
+                                   readonly="state in ('done', 'cancelled')"/>
+                            <field name="patient_category" widget="radio"
+                                   options="{'horizontal': True}"
+                                   readonly="state in ('done', 'cancelled')"/>
+                        </group>
+                        <group>
+                            <field name="appointment_date" widget="datetime"
+                                   options="{'minute_step': 30}"
+                                   readonly="state in ('done', 'cancelled')"/>
+                            <field name="appointment_end" readonly="1"/>
+                            <field name="slot_duration"
+                                   readonly="state in ('done', 'cancelled')"/>
+                            <field name="treatment_category_ids" widget="many2many_tags"
+                                   readonly="state in ('done', 'cancelled')"/>
+                            <field name="consultation_fee"
+                                   readonly="state in ('confirmed', 'in_progress', 'done', 'cancelled')"/>
+                        </group>
+                    </group>
+
+                    <group string="Video Consultation"
+                           invisible="not zoom_meeting_url">
+                        <group>
+                            <field name="zoom_meeting_url" widget="url"/>
+                            <field name="zoom_meeting_id"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Clinical Notes" name="clinical_notes">
+                            <field name="notes"
+                                   placeholder="Enter clinical notes, observations, treatment plan..."/>
+                        </page>
+                        <page string="QR Codes" name="qr_codes"
+                              invisible="not appointment_no">
+                            <group>
+                                <group string="Booking QR">
+                                    <field name="booking_qr" widget="image"
+                                           class="oe_avatar"/>
+                                </group>
+                                <group string="Appointment QR">
+                                    <field name="appointment_qr" widget="image"
+                                           class="oe_avatar"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+
+                </sheet>
+
+                <chatter/>
+
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--                  APPOINTMENT CALENDAR VIEW                   -->
+    <!-- ============================================================ -->
+
+    <record id="view_medical_appointment_calendar" model="ir.ui.view">
+        <field name="name">medical.appointment.calendar</field>
+        <field name="model">medical.appointment</field>
+        <field name="arch" type="xml">
+            <calendar string="Appointments"
+                      date_start="appointment_date"
+                      date_stop="appointment_end"
+                      mode="week"
+                      color="state"
+                      quick_create="0">
+                <field name="appointment_no"/>
+                <field name="patient_id" filters="1" avatar_field="image_128"/>
+                <field name="patient_code"/>
+                <field name="doctor_id" filters="1"/>
+                <field name="shift_id"/>
+                <field name="state" invisible="1" filters="1"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--                    APPOINTMENT LIST VIEW                     -->
+    <!-- ============================================================ -->
+
+    <record id="view_medical_appointment_list" model="ir.ui.view">
+        <field name="name">medical.appointment.list</field>
+        <field name="model">medical.appointment</field>
+        <field name="arch" type="xml">
+            <list string="Appointments"
+                  decoration-info="state == 'confirmed'"
+                  decoration-warning="state == 'in_progress'"
+                  decoration-success="state == 'done'"
+                  decoration-muted="state == 'cancelled'">
+                <field name="appointment_no"/>
+                <field name="patient_id"/>
+                <field name="patient_code"/>
+                <field name="gender" optional="hide"/>
+                <field name="doctor_id"/>
+                <field name="appointment_date"/>
+                <field name="shift_id" optional="hide"/>
+                <field name="urgency"/>
+                <field name="consultation_fee" optional="hide"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'confirmed'"
+                       decoration-warning="state == 'in_progress'"
+                       decoration-success="state == 'done'"
+                       decoration-danger="state == 'cancelled'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--                   APPOINTMENT KANBAN VIEW                    -->
+    <!-- ============================================================ -->
+
+    <record id="view_medical_appointment_kanban" model="ir.ui.view">
+        <field name="name">medical.appointment.kanban</field>
+        <field name="model">medical.appointment</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile" quick_create="false"
+                    default_group_by="state">
+                <field name="patient_id"/>
+                <field name="appointment_no"/>
+                <field name="appointment_date"/>
+                <field name="doctor_id"/>
+                <field name="state"/>
+                <field name="urgency"/>
+
+                <templates>
+                    <t t-name="card">
+                        <div class="d-flex justify-content-between mb-2">
+                            <strong class="fs-5">
+                                <field name="patient_id"/>
+                            </strong>
+                            <span class="text-muted">
+                                <field name="appointment_date" widget="datetime"/>
+                            </span>
+                        </div>
+                        <div class="text-muted">
+                            <field name="appointment_no"/>
+                        </div>
+                        <div class="text-muted">
+                            <i class="fa fa-user-md me-1"/>
+                            <field name="doctor_id"/>
+                        </div>
+                        <div class="mt-2">
+                            <field name="urgency" widget="badge"
+                                   decoration-danger="urgency == 'urgent'"/>
+                            <field name="state" widget="badge"
+                                   decoration-info="state == 'confirmed'"
+                                   decoration-warning="state == 'in_progress'"
+                                   decoration-success="state == 'done'"
+                                   decoration-danger="state == 'cancelled'"/>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ============================================================ -->
+    <!--                 APPOINTMENT ACTION WINDOWS                   -->
+    <!-- ============================================================ -->
+
+    <record id="action_medical_appointment" model="ir.actions.act_window">
+        <field name="name">Appointments</field>
+        <field name="res_model">medical.appointment</field>
+        <field name="view_mode">list,kanban,form,calendar</field>
+        <field name="search_view_id" ref="view_medical_appointment_search"/>
+    </record>
+
+    <record id="action_medical_appointment_calendar" model="ir.actions.act_window">
+        <field name="name">Appointments Calendar</field>
+        <field name="res_model">medical.appointment</field>
+        <field name="view_mode">calendar,list,form</field>
+        <field name="search_view_id" ref="view_medical_appointment_search"/>
+    </record>
+
+</odoo>

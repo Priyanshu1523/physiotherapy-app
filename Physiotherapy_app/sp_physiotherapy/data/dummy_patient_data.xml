@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Dummy Patient Data -->
+        <record model="res.partner" id="dummy_patient_001">
+            <field name="name">Rahul Mehta</field>
+            <field name="is_patient" eval="True"/>
+            <field name="patient_code">PAT-001</field>
+            <field name="date_of_birth">1990-03-15</field>
+            <field name="gender">male</field>
+            <field name="blood_group">o+</field>
+            <field name="email">rahul.mehta@email.com</field>
+            <field name="medical_history">Lower back pain since 2023, no surgery</field>
+            <field name="allergies">None</field>
+            <field name="emergency_contact_name">Priya Mehta</field>
+            <field name="emergency_contact_phone">+91 98765 43210</field>
+        </record>
+        <record model="res.partner" id="dummy_patient_002">
+            <field name="name">Anjali Desai</field>
+            <field name="is_patient" eval="True"/>
+            <field name="patient_code">PAT-002</field>
+            <field name="date_of_birth">1985-08-22</field>
+            <field name="gender">female</field>
+            <field name="blood_group">b+</field>
+            <field name="email">anjali.desai@email.com</field>
+            <field name="medical_history">Sports injury - left knee ACL strain</field>
+            <field name="allergies">Penicillin</field>
+            <field name="emergency_contact_name">Vikram Desai</field>
+            <field name="emergency_contact_phone">+91 98765 12345</field>
+        </record>
+    </data>
+</odoo>

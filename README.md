@@ -8,7 +8,7 @@
 [![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg?style=flat-square)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](CONTRIBUTING.md)
 
-> **PhysioCare** is an enterprise-grade Physiotherapy Clinic Management System and Healthcare ERP. Migrated and re-engineered from the **Odoo 19 `adx_physiotherapy`** Python module into a modern, lightning-fast **PERN (PostgreSQL, Express, React, Node.js)** full-stack architecture.
+> **PhysioCare** is an enterprise-grade Physiotherapy Clinic Management System and Healthcare ERP. Migrated and re-engineered from the **Odoo 19 `sp_physiotherapy`** Python module by **Supriya Technology** into a modern, lightning-fast **PERN (PostgreSQL, Express, React, Node.js)** full-stack architecture.
 
 ---
 
@@ -86,7 +86,7 @@
 
 ## 🔐 Role-Based Access Control (RBAC)
 
-The application enforces strict role segregation aligned with Odoo's security groups (`adx_physiotherapy/security/physiotherapy_security.xml`):
+The application enforces strict role segregation aligned with Odoo's security groups (`sp_physiotherapy/security/physiotherapy_groups.xml`):
 
 | Role | Accessible Modules | Core Responsibilities |
 | :--- | :--- | :--- |
@@ -311,7 +311,7 @@ Use any of these seeded credentials to test different system roles:
 
 ## 🔄 Odoo 19 to PERN Feature Parity Matrix
 
-| Odoo 19 Model (`adx_physiotherapy`) | Node.js Backend Route | PostgreSQL Table | React 18 View Component | Status |
+| Odoo 19 Model (`sp_physiotherapy`) | Node.js Backend Route | PostgreSQL Table | React 18 View Component | Status |
 | :--- | :--- | :--- | :--- | :---: |
 | `physiotherapy.appointment` | `/api/appointments` | `appointments` | `AppointmentsView.jsx` | ✅ Completed |
 | `medical.physiotherapist` | `/api/doctors` | `doctors` | `DoctorsView.jsx` | ✅ Completed |
@@ -351,8 +351,22 @@ Use any of these seeded credentials to test different system roles:
 | `GET` | `/api/billing/invoices` | List invoices with GST breakdowns & payments | Yes |
 | `POST` | `/api/billing/invoices` | Generate new tax invoice | Yes |
 | `POST` | `/api/billing/invoices/:id/pay` | Record payment against invoice | Yes |
+| `GET` | `/api/payment/config` | Retrieve merchant UPI VPA & gateway keys | No |
+| `POST` | `/api/payment/create-order` | Generate dynamic UPI payment QR code & order ID | No |
+| `POST` | `/api/payment/verify` | Verify UPI / Card / NetBanking payment & issue receipt | No |
 | `GET` | `/api/equipments` | List therapy devices & maintenance alerts | Yes |
 | `GET` | `/api/xray-reports` | List radiological imaging assessments | Yes |
+
+---
+
+## 💳 Payment Gateway & Cashiering System
+
+PhysioCare incorporates an omnichannel healthcare payment engine supporting both online self-checkout and reception desk cashiering:
+1. **Dynamic Scannable UPI QR Codes**: Generates real-time, order-specific UPI deep-links scannable by Google Pay, PhonePe, Paytm, and BHIM with 15-minute expiration timers and auto-verification.
+2. **Credit & Debit Cards**: 256-Bit SSL encrypted card terminal simulation compatible with Razorpay and Stripe schemas with auto-formatting card number inputs and visual card previews.
+3. **Net Banking**: Instant integration with leading Indian retail banks (HDFC, ICICI, SBI, Axis, Kotak, PNB).
+4. **Reception Cash Desk**: Change return calculator, cashier notes, and immediate thermal receipt printing.
+5. **Configurable Environment Variables**: Easily swap test credentials with live production merchant keys via `backend/.env` and `frontend/.env`.
 
 ---
 
@@ -367,4 +381,4 @@ PhysioCare incorporates clean, print-media CSS layouts tailored for clinic stati
 
 ## 📄 License
 
-This project is licensed under the **ISC License**. Developed as an enterprise conversion of the Odoo 19 `adx_physiotherapy` module into a full-stack PERN application.
+This project is licensed under the **ISC License**. Developed as an enterprise conversion of the Odoo 19 `sp_physiotherapy` module by Supriya Technology into a full-stack PERN application.
